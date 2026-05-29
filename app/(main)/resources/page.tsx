@@ -127,8 +127,8 @@ export default function ResourcesPage() {
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filtered.map(resource => (
-          <Link key={resource.id} href={`/resources/${resource.id}`} className="block">
+        {filtered.map((resource, index) => (
+          <Link key={resource.id} href={`/resources/${resource.id}`} className={`block animate-slide-up stagger-${Math.min(index + 1, 8)}`}>
             <Card variant="outlined" padding="default" interactive className="h-full flex flex-col">
               <div className="flex items-start gap-3 mb-3">
                 <div

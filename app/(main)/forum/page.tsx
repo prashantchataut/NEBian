@@ -110,8 +110,8 @@ export default function ForumPage() {
       )}
 
       <div className="space-y-3">
-        {filtered.map(question => (
-          <Link key={question.id} href={`/forum/${question.id}`} className="block">
+        {filtered.map((question, index) => (
+          <Link key={question.id} href={`/forum/${question.id}`} className={`block animate-slide-up stagger-${Math.min(index + 1, 8)}`}>
             <Card variant="outlined" padding="default" interactive className="group">
               <div className="flex items-start gap-3">
                 <Avatar size="md" initials={question.author.name.split(' ').map(n => n[0]).join('')} />

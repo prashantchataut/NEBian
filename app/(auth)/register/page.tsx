@@ -20,9 +20,9 @@ export default function RegisterPage() {
   const canSubmit = name.length >= 2 && email.includes('@') && password.length >= 8 && passwordsMatch;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div className="text-center">
-        <h1 className="text-xl font-semibold text-on-surface">Create your account</h1>
+        <h1 className="text-xl font-semibold text-on-surface tracking-tight">Create your account</h1>
         <p className="text-sm text-on-surface-variant mt-1">Start your learning journey with NEBians</p>
       </div>
 
@@ -48,11 +48,12 @@ export default function RegisterPage() {
         />
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-on-surface">Grade</label>
+          <label htmlFor="grade" className="text-sm font-medium text-on-surface">Grade</label>
           <select
+            id="grade"
             value={grade}
             onChange={(e) => setGrade(e.target.value)}
-            className="h-10 rounded-[var(--radius-sm)] border border-outline-variant bg-surface-container-lowest px-3 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
+            className="h-10 w-full rounded-[var(--radius-sm)] border border-outline-variant bg-surface-container-lowest px-3 text-sm text-on-surface hover:border-outline focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-[border-color,box-shadow] duration-[var(--transition-fast)] appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M4%206l4%204%204-4%22%20fill%3D%22none%22%20stroke%3D%22%2379747E%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E')] bg-[length:16px] bg-[right_12px_center] bg-no-repeat pr-10"
           >
             <option value="">Select your grade</option>
             {GRADES.map(g => (
@@ -96,7 +97,7 @@ export default function RegisterPage() {
           <input
             type="checkbox"
             id="terms"
-            className="mt-1 h-4 w-4 rounded-[var(--radius-sm)] border-outline-variant text-primary focus:ring-primary"
+            className="mt-1 h-4 w-4 rounded-[var(--radius-sm)] border-outline-variant text-primary focus:ring-primary accent-primary"
           />
           <label htmlFor="terms" className="text-xs text-on-surface-variant">
             I agree to the Terms of Service and Privacy Policy
