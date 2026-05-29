@@ -13,11 +13,11 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantStyles: Record<ButtonVariant, string> = {
-  primary: 'bg-primary text-on-primary hover:bg-primary-dark',
-  secondary: 'bg-secondary-container text-on-secondary-container hover:bg-secondary-container/high',
-  outline: 'border border-outline text-on-surface hover:bg-surface-container-high',
-  ghost: 'text-on-surface-variant hover:bg-surface-container-high',
-  danger: 'bg-error text-on-error hover:bg-error/90',
+  primary: 'bg-primary text-on-primary hover:bg-primary-dark active:bg-primary-dark/90 shadow-[var(--elevation-1)] active:shadow-none',
+  secondary: 'bg-secondary-container text-on-secondary-container hover:brightness-[0.96] active:brightness-[0.92]',
+  outline: 'border border-outline text-on-surface hover:bg-surface-container-high active:bg-surface-container-highest',
+  ghost: 'text-on-surface-variant hover:bg-surface-container-high active:bg-surface-container-highest',
+  danger: 'bg-error text-on-error hover:brightness-[0.96] active:brightness-[0.92] shadow-[var(--elevation-1)] active:shadow-none',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -32,7 +32,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={cn(
-          'inline-flex items-center justify-center rounded-[var(--radius-full)] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50 disabled:pointer-events-none',
+          'inline-flex items-center justify-center rounded-[var(--radius-full)] font-medium select-none transition-[background-color,box-shadow,filter] duration-[var(--transition-fast)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-38 disabled:pointer-events-none active:scale-[0.97]',
           variantStyles[variant],
           sizeStyles[size],
           className

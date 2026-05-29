@@ -2,10 +2,11 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { pdfjs, Document, Page } from 'react-pdf';
-import { ArrowLeft, ZoomIn, ZoomOut, ChevronLeft, ChevronRight, Highlighter, Underline, MessageSquarePlus, Eraser, List, Heart, Download, Bookmark, X } from 'lucide-react';
+import Link from 'next/link';
+import { ArrowLeft, ZoomIn, ZoomOut, ChevronLeft, ChevronRight, Highlighter, Underline, MessageSquarePlus, Eraser, List, Download, Bookmark, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ANNOTATION_COLORS, SUBJECT_LABELS, GRADE_LABELS, RESOURCE_TYPE_LABELS, SUBJECT_COLORS, RESOURCE_TYPE_COLORS, type PdfAnnotation } from '@/types';
+import { ANNOTATION_COLORS, SUBJECT_LABELS, GRADE_LABELS, SUBJECT_COLORS, type PdfAnnotation } from '@/types';
 import { generateId } from '@/lib/utils';
 import { getAnnotations, addAnnotation, deleteAnnotation } from '@/lib/pdf-annotations';
 import { AnnotationLayer } from './annotation-layer';
@@ -125,9 +126,9 @@ export function PdfViewer({ fileUrl, resourceTitle, subject, grade, type, pageCo
     <div className="flex flex-col h-[calc(100dvh-3.5rem)]">
       <div className="flex items-center justify-between px-4 py-2 border-b border-outline-variant bg-surface shrink-0">
         <div className="flex items-center gap-3 min-w-0">
-          <a href="/resources" className="inline-flex items-center justify-center h-8 w-8 rounded-[var(--radius-full)] hover:bg-surface-container-high transition-colors shrink-0">
+          <Link href="/resources" className="inline-flex items-center justify-center h-8 w-8 rounded-[var(--radius-full)] hover:bg-surface-container-high transition-colors shrink-0">
             <ArrowLeft className="h-5 w-5 text-on-surface" />
-          </a>
+          </Link>
           <div className="min-w-0">
             <h1 className="text-sm font-medium text-on-surface truncate">{resourceTitle}</h1>
             <div className="flex items-center gap-2 mt-0.5">

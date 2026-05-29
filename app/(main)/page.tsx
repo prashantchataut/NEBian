@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { BookOpen, MessageCircle, Heart, ArrowRight, TrendingUp, Clock } from 'lucide-react';
+import { BookOpen, MessageCircle, Heart, ArrowRight, TrendingUp, Clock, Sparkles } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { SUBJECTS, SUBJECT_COLORS, SUBJECT_LABELS, GRADE_LABELS, RESOURCE_TYPE_LABELS } from '@/types';
@@ -17,21 +17,21 @@ const subjectIcons: Record<string, string> = {
 
 export default function HomePage() {
   return (
-    <div className="px-4 lg:px-6 py-6 max-w-5xl mx-auto space-y-8">
-      <section>
-        <h1 className="text-2xl font-semibold text-on-surface">Welcome back</h1>
-        <p className="text-sm text-on-surface-variant mt-1">Continue where you left off or explore new resources.</p>
+    <div className="px-4 lg:px-6 py-6 max-w-5xl mx-auto space-y-8 animate-fade-in">
+      <section className="space-y-1">
+        <h1 className="text-2xl font-semibold text-on-surface tracking-tight">Welcome back</h1>
+        <p className="text-sm text-on-surface-variant">Continue where you left off or explore new resources.</p>
       </section>
 
       <section>
-        <h2 className="text-sm font-medium text-on-surface-variant uppercase tracking-wider mb-3">Subjects</h2>
+        <h2 className="text-xs font-semibold text-on-surface-variant uppercase tracking-widest mb-3">Subjects</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {SUBJECTS.map((subject) => (
-            <Link key={subject} href={`/resources?subject=${subject}`}>
+          {SUBJECTS.map((subject, i) => (
+            <Link key={subject} href={`/resources?subject=${subject}`} className="animate-slide-up stagger-%7Bi%7D">
               <Card variant="outlined" padding="compact" interactive className="flex items-center gap-3">
                 <div
                   className="flex items-center justify-center w-10 h-10 rounded-[var(--radius-md)] text-sm font-bold text-white shrink-0"
-                  style={{ backgroundColor: `var(--color-subject-${subject.charAt(0).toLowerCase() + subject.slice(1).replace(/([A-Z])/g, '')})` }}
+                  style={{ backgroundColor: SUBJECT_COLORS[subject] }}
                 >
                   {subjectIcons[subject]}
                 </div>
@@ -47,9 +47,9 @@ export default function HomePage() {
 
       <section>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-medium text-on-surface-variant uppercase tracking-wider">Recent Resources</h2>
-          <Link href="/resources" className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-primary-dark transition-colors">
-            View all <ArrowRight className="h-4 w-4" />
+          <h2 className="text-xs font-semibold text-on-surface-variant uppercase tracking-widest">Recent Resources</h2>
+          <Link href="/resources" className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-primary-dark transition-colors group">
+            View all <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </div>
         <div className="space-y-3">
@@ -78,9 +78,9 @@ export default function HomePage() {
 
       <section>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-medium text-on-surface-variant uppercase tracking-wider">Forum Activity</h2>
-          <Link href="/forum" className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-primary-dark transition-colors">
-            View all <ArrowRight className="h-4 w-4" />
+          <h2 className="text-xs font-semibold text-on-surface-variant uppercase tracking-widest">Forum Activity</h2>
+          <Link href="/forum" className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-primary-dark transition-colors group">
+            View all <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </div>
         <div className="space-y-3">
@@ -109,7 +109,7 @@ export default function HomePage() {
 
       <section>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-medium text-on-surface-variant uppercase tracking-wider">Popular This Week</h2>
+          <h2 className="text-xs font-semibold text-on-surface-variant uppercase tracking-widest">Popular This Week</h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {[1, 2, 3].map((i) => (

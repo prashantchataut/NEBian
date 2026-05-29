@@ -15,7 +15,7 @@ export default function LoginPage() {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h1 className="text-xl font-semibold text-on-surface">Welcome back</h1>
+        <h1 className="text-xl font-semibold text-on-surface tracking-tight">Welcome back</h1>
         <p className="text-sm text-on-surface-variant mt-1">Sign in to your NEBians account</p>
       </div>
 
@@ -51,7 +51,7 @@ export default function LoginPage() {
         </div>
 
         <div className="flex items-center justify-end">
-          <Link href="#" className="text-sm text-primary hover:text-primary-dark transition-colors">
+          <Link href="#" className="text-sm text-primary hover:text-primary-dark transition-colors font-medium">
             Forgot password?
           </Link>
         </div>

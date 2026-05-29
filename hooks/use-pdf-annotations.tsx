@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import type { PdfAnnotation } from '@/types';
 
 export function usePdfAnnotations(pdfId: string) {
-  const [annotations, setAnnotations] = useState<any[]>([]);
+  const [annotations, setAnnotations] = useState<PdfAnnotation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

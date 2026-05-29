@@ -4,10 +4,11 @@ import { useEffect, useState } from 'react';
 
 export function usePushNotifications() {
   const [permission, setPermission] = useState<NotificationPermission>('default');
-  const [isSupported, setIsSupported] = useState(false);
+  const [isSupported, setIsSupported] = useState(
+    typeof window !== 'undefined' && 'Notification' in window && 'serviceWorker' in navigator
+  );
 
   useEffect(() => {
-    setIsSupported('Notification' in window && 'serviceWorker' in navigator);
     if ('Notification' in window) {
       setPermission(Notification.permission);
     }

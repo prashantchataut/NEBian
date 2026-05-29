@@ -6,17 +6,25 @@
   --color-primary-dark: #4F378B;
   --color-on-primary: #FFFFFF;
   --color-on-primary-light: #381E72;
+  --color-primary-container: #EADDFF;
+  --color-on-primary-container: #21005E;
   --color-secondary: #625B71;
   --color-secondary-light: #CCC2DC;
   --color-secondary-dark: #4A4458;
   --color-on-secondary: #FFFFFF;
+  --color-secondary-container: #E8DEF8;
+  --color-on-secondary-container: #1E192B;
   --color-tertiary: #7D5260;
   --color-tertiary-light: #FFD8E4;
   --color-tertiary-dark: #5C3F4B;
   --color-on-tertiary: #FFFFFF;
+  --color-tertiary-container: #FFD8E4;
+  --color-on-tertiary-container: #31111D;
   --color-error: #B3261E;
   --color-error-light: #F9DEDC;
+  --color-error-container: #F9DEDC;
   --color-on-error: #FFFFFF;
+  --color-on-error-container: #410E0B;
   --color-surface: #FFFBFE;
   --color-surface-dim: #DED8E1;
   --color-surface-bright: #FFFBFE;
@@ -54,6 +62,11 @@
   --transition-fast: 150ms cubic-bezier(0.2, 0, 0, 1);
   --transition-medium: 250ms cubic-bezier(0.2, 0, 0, 1);
   --transition-slow: 350ms cubic-bezier(0.2, 0, 0, 1);
+  --transition-emphasized: 500ms cubic-bezier(0.2, 0, 0, 1);
+  --transition-decelerate: 400ms cubic-bezier(0, 0, 0, 1);
+  --elevation-1: 0 1px 2px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.06);
+  --elevation-2: 0 2px 4px rgba(0,0,0,0.1), 0 3px 8px rgba(0,0,0,0.08);
+  --elevation-3: 0 4px 8px rgba(0,0,0,0.12), 0 6px 16px rgba(0,0,0,0.08);
 }
 
 [data-theme="dark"] {
@@ -62,17 +75,25 @@
   --color-primary-dark: #EADDFF;
   --color-on-primary: #381E72;
   --color-on-primary-light: #D0BCFF;
+  --color-primary-container: #4F378B;
+  --color-on-primary-container: #EADDFF;
   --color-secondary: #CCC2DC;
   --color-secondary-light: #4A4458;
   --color-secondary-dark: #E8DEF8;
   --color-on-secondary: #332D41;
+  --color-secondary-container: #4A4458;
+  --color-on-secondary-container: #E8DEF8;
   --color-tertiary: #EFB8C8;
   --color-tertiary-light: #5C3F4B;
   --color-tertiary-dark: #FFD8E4;
   --color-on-tertiary: #492532;
+  --color-tertiary-container: #5C3F4B;
+  --color-on-tertiary-container: #FFD8E4;
   --color-error: #F2B8B5;
   --color-error-light: #8C1D18;
+  --color-error-container: #8C1D18;
   --color-on-error: #601410;
+  --color-on-error-container: #F9DEDC;
   --color-surface: #141218;
   --color-surface-dim: #141218;
   --color-surface-bright: #3B383E;
@@ -90,10 +111,9 @@
   --color-inverse-primary: #6750A4;
   --color-background: #141218;
   --color-on-background: #E6E0E9;
-}
-
-* {
-  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+  --elevation-1: 0 1px 2px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2);
+  --elevation-2: 0 2px 4px rgba(0,0,0,0.3), 0 3px 8px rgba(0,0,0,0.25);
+  --elevation-3: 0 4px 8px rgba(0,0,0,0.35), 0 6px 16px rgba(0,0,0,0.25);
 }
 
 html {
@@ -105,7 +125,7 @@ html {
 body {
   background-color: var(--color-background);
   color: var(--color-on-surface);
-  font-family: var(--font-poppins), system-ui, sans-serif;
+  font-family: var(--font-poppins), system-ui, -apple-system, sans-serif;
   min-height: 100dvh;
 }
 
@@ -145,11 +165,35 @@ body {
   50% { opacity: 0.4; }
 }
 
-.animate-fade-in { animation: fadeIn var(--transition-medium) ease-out; }
-.animate-slide-up { animation: slideUp var(--transition-medium) ease-out; }
-.animate-slide-down { animation: slideDown var(--transition-medium) ease-out; }
-.animate-scale-in { animation: scaleIn var(--transition-fast) ease-out; }
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes ripple {
+  from { transform: scale(0); opacity: 0.4; }
+  to { transform: scale(2.5); opacity: 0; }
+}
+
+.animate-fade-in { animation: fadeIn var(--transition-medium) ease-out forwards; }
+.animate-slide-up { animation: slideUp var(--transition-medium) ease-out forwards; }
+.animate-slide-down { animation: slideDown var(--transition-medium) ease-out forwards; }
+.animate-scale-in { animation: scaleIn var(--transition-fast) ease-out forwards; }
 .animate-pulse-slow { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+.animate-shimmer {
+  background: linear-gradient(90deg, var(--color-surface-container-high) 25%, var(--color-surface-container) 50%, var(--color-surface-container-high) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.stagger-1 { animation-delay: 50ms; }
+.stagger-2 { animation-delay: 100ms; }
+.stagger-3 { animation-delay: 150ms; }
+.stagger-4 { animation-delay: 200ms; }
+.stagger-5 { animation-delay: 250ms; }
+.stagger-6 { animation-delay: 300ms; }
+.stagger-7 { animation-delay: 350ms; }
+.stagger-8 { animation-delay: 400ms; }
 
 @theme inline {
   --color-background: var(--color-background);
@@ -158,9 +202,16 @@ body {
   --color-primary-light: var(--color-primary-light);
   --color-primary-dark: var(--color-primary-dark);
   --color-on-primary: var(--color-on-primary);
+  --color-primary-container: var(--color-primary-container);
+  --color-on-primary-container: var(--color-on-primary-container);
   --color-secondary: var(--color-secondary);
   --color-secondary-light: var(--color-secondary-light);
   --color-on-secondary: var(--color-on-secondary);
+  --color-secondary-container: var(--color-secondary-container);
+  --color-on-secondary-container: var(--color-on-secondary-container);
+  --color-tertiary: var(--color-tertiary);
+  --color-tertiary-container: var(--color-tertiary-container);
+  --color-on-tertiary-container: var(--color-on-tertiary-container);
   --color-surface: var(--color-surface);
   --color-surface-dim: var(--color-surface-dim);
   --color-surface-bright: var(--color-surface-bright);
@@ -175,7 +226,9 @@ body {
   --color-outline-variant: var(--color-outline-variant);
   --color-error: var(--color-error);
   --color-error-light: var(--color-error-light);
+  --color-error-container: var(--color-error-container);
   --color-on-error: var(--color-on-error);
+  --color-on-error-container: var(--color-on-error-container);
   --color-inverse-surface: var(--color-inverse-surface);
   --color-inverse-on-surface: var(--color-inverse-on-surface);
   --color-inverse-primary: var(--color-inverse-primary);

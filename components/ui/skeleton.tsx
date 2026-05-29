@@ -21,8 +21,9 @@ export const Skeleton = forwardRef<HTMLDivElement, SkeletonProps>(
     return (
       <div
         ref={ref}
-        className={cn('animate-pulse-slow bg-surface-container-high', variantStyles[variant], className)}
+        className={cn('animate-shimmer rounded-[var(--radius-sm)]', variantStyles[variant], className)}
         style={{ width, height, ...style }}
+        aria-hidden="true"
         {...props}
       />
     );

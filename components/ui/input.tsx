@@ -29,7 +29,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
         <div className="relative">
           {iconLeft && (
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">
               {iconLeft}
             </span>
           )}
@@ -37,7 +37,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             className={cn(
-              'w-full rounded-[var(--radius-sm)] border bg-surface-container-lowest px-3 text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary transition-colors',
+              'w-full rounded-[var(--radius-sm)] border bg-surface-container-lowest px-3 text-on-surface placeholder:text-on-surface-variant/60 transition-[border-color,box-shadow] duration-[var(--transition-fast)]',
+              'focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent',
+              'hover:border-outline',
               error ? 'border-error focus:ring-error' : 'border-outline-variant',
               iconLeft && 'pl-10',
               iconRight && 'pr-10',
@@ -49,7 +51,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             {...props}
           />
           {iconRight && (
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant">
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">
               {iconRight}
             </span>
           )}

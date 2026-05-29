@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, SlidersHorizontal, BookOpen, Download, Heart } from 'lucide-react';
+import Link from 'next/link';
+import { Search, SlidersHorizontal, BookOpen, Download } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -36,21 +37,21 @@ export default function ResourcesPage() {
   });
 
   return (
-    <div className="px-4 lg:px-6 py-6 max-w-5xl mx-auto space-y-6">
+    <div className="px-4 lg:px-6 py-6 max-w-5xl mx-auto space-y-6 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-semibold text-on-surface">Resources</h1>
+        <h1 className="text-2xl font-semibold text-on-surface tracking-tight">Resources</h1>
         <p className="text-sm text-on-surface-variant mt-1">Browse textbooks, notes, past papers, and practice sets.</p>
       </div>
 
       <div className="flex items-center gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-on-surface-variant" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-on-surface-variant pointer-events-none" />
           <input
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search resources..."
-            className="w-full h-10 pl-10 pr-4 rounded-[var(--radius-full)] bg-surface-container-high text-on-surface text-sm placeholder:text-on-surface-variant border border-outline-variant focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
+            className="w-full h-10 pl-10 pr-4 rounded-[var(--radius-full)] bg-surface-container-high text-on-surface text-sm placeholder:text-on-surface-variant/60 border border-transparent hover:border-outline-variant focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-[border-color,box-shadow] duration-[var(--transition-fast)]"
           />
         </div>
         <Button
@@ -66,16 +67,16 @@ export default function ResourcesPage() {
       {showFilters && (
         <div className="space-y-4 p-4 rounded-[var(--radius-md)] bg-surface-container-low border border-outline-variant animate-slide-down">
           <div>
-            <p className="text-xs font-medium text-on-surface-variant uppercase tracking-wider mb-2">Subject</p>
+            <p className="text-xs font-semibold text-on-surface-variant uppercase tracking-widest mb-2">Subject</p>
             <div className="flex flex-wrap gap-2">
               {SUBJECTS.map(s => (
                 <button
                   key={s}
                   onClick={() => toggleFilter(selectedSubjects, setSelectedSubjects, s)}
-                  className={`px-3 h-7 rounded-[var(--radius-full)] text-xs font-medium transition-colors ${
+                  className={`px-3 h-7 rounded-[var(--radius-full)] text-xs font-medium transition-[background-color,color] duration-[var(--transition-fast)] ${
                     selectedSubjects.includes(s)
                       ? 'bg-primary text-on-primary'
-                      : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest'
+                      : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest active:bg-surface-container-highest'
                   }`}
                 >
                   {SUBJECT_LABELS[s]}
@@ -84,16 +85,16 @@ export default function ResourcesPage() {
             </div>
           </div>
           <div>
-            <p className="text-xs font-medium text-on-surface-variant uppercase tracking-wider mb-2">Grade</p>
+            <p className="text-xs font-semibold text-on-surface-variant uppercase tracking-widest mb-2">Grade</p>
             <div className="flex flex-wrap gap-2">
               {GRADES.map(g => (
                 <button
                   key={g}
                   onClick={() => toggleFilter(selectedGrades, setSelectedGrades, g)}
-                  className={`px-3 h-7 rounded-[var(--radius-full)] text-xs font-medium transition-colors ${
+                  className={`px-3 h-7 rounded-[var(--radius-full)] text-xs font-medium transition-[background-color,color] duration-[var(--transition-fast)] ${
                     selectedGrades.includes(g)
                       ? 'bg-primary text-on-primary'
-                      : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest'
+                      : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest active:bg-surface-container-highest'
                   }`}
                 >
                   {GRADE_LABELS[g]}
@@ -102,16 +103,16 @@ export default function ResourcesPage() {
             </div>
           </div>
           <div>
-            <p className="text-xs font-medium text-on-surface-variant uppercase tracking-wider mb-2">Type</p>
+            <p className="text-xs font-semibold text-on-surface-variant uppercase tracking-widest mb-2">Type</p>
             <div className="flex flex-wrap gap-2">
               {RESOURCE_TYPES.map(t => (
                 <button
                   key={t}
                   onClick={() => toggleFilter(selectedTypes, setSelectedTypes, t)}
-                  className={`px-3 h-7 rounded-[var(--radius-full)] text-xs font-medium transition-colors ${
+                  className={`px-3 h-7 rounded-[var(--radius-full)] text-xs font-medium transition-[background-color,color] duration-[var(--transition-fast)] ${
                     selectedTypes.includes(t)
                       ? 'bg-primary text-on-primary'
-                      : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest'
+                      : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest active:bg-surface-container-highest'
                   }`}
                 >
                   {RESOURCE_TYPE_LABELS[t]}
@@ -124,7 +125,7 @@ export default function ResourcesPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {filtered.map(resource => (
-          <a key={resource.id} href={`/resources/${resource.id}`} className="block">
+          <Link key={resource.id} href={`/resources/${resource.id}`} className="block">
             <Card variant="outlined" padding="default" interactive className="h-full flex flex-col">
               <div className="flex items-start gap-3 mb-3">
                 <div
@@ -152,15 +153,17 @@ export default function ResourcesPage() {
                 <span>{resource.pageCount} pages</span>
               </div>
             </Card>
-          </a>
+          </Link>
         ))}
       </div>
 
       {filtered.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-12 text-center">
-          <BookOpen className="h-12 w-12 text-on-surface-variant mb-3" />
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="flex items-center justify-center w-16 h-16 rounded-[var(--radius-full)] bg-surface-container-high mb-4">
+            <BookOpen className="h-8 w-8 text-on-surface-variant" />
+          </div>
           <h3 className="text-base font-medium text-on-surface">No resources found</h3>
-          <p className="text-sm text-on-surface-variant mt-1">Try adjusting your filters or search terms.</p>
+          <p className="text-sm text-on-surface-variant mt-1 max-w-xs">Try adjusting your filters or search terms.</p>
         </div>
       )}
     </div>

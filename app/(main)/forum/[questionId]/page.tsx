@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { Heart, MessageCircle, Share2, CheckCircle2, ArrowLeft } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import Link from 'next/link';
 
 const mockQuestion = {
   id: '1',
@@ -33,26 +33,26 @@ export default function QuestionDetailPage() {
   const [likeCount, setLikeCount] = useState(mockQuestion.likesCount);
 
   return (
-    <div className="px-4 lg:px-6 py-6 max-w-4xl mx-auto">
-      <a href="/forum" className="inline-flex items-center gap-2 text-sm text-on-surface-variant hover:text-primary transition-colors mb-4">
-        <ArrowLeft className="h-4 w-4" /> Back to Forum
-      </a>
+    <div className="px-4 lg:px-6 py-6 max-w-4xl mx-auto animate-fade-in">
+      <Link href="/forum" className="inline-flex items-center gap-2 text-sm text-on-surface-variant hover:text-primary transition-colors mb-4 group">
+        <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" /> Back to Forum
+      </Link>
 
       <Card variant="outlined" padding="spacious" className="mb-6">
         <div className="flex items-start gap-3 mb-4">
           <Avatar size="lg" initials={mockQuestion.author.initials} />
           <div className="flex-1 min-w-0">
-            <h1 className="text-lg font-semibold text-on-surface">{mockQuestion.title}</h1>
+            <h1 className="text-lg font-semibold text-on-s-surface tracking-tight">{mockQuestion.title}</h1>
             <div className="flex items-center gap-2 mt-1">
-              <span className="text-sm text-on-surface-variant">{mockQuestion.author.name}</span>
+              <span className="text-sm text-on-surface">{mockQuestion.author.name}</span>
               <span className="text-xs text-on-surface-variant">{mockQuestion.author.grade}</span>
             </div>
           </div>
         </div>
 
-        <div className="prose prose-sm max-w-none text-on-surface mb-4">
+        <div className="text-sm text-on-surface-variant leading-relaxed mb-4">
           {mockQuestion.content.split('\n').map((paragraph, i) => (
-            <p key={i} className="text-sm text-on-surface-variant leading-relaxed mb-2">{paragraph}</p>
+            <p key={i} className="mb-2">{paragraph}</p>
           ))}
         </div>
 
@@ -69,16 +69,16 @@ export default function QuestionDetailPage() {
         <div className="flex items-center gap-4 pt-3">
           <button
             onClick={() => { setIsLiked(!isLiked); setLikeCount(isLiked ? likeCount - 1 : likeCount + 1); }}
-            className="flex items-center gap-1.5 text-sm text-on-surface-variant hover:text-primary transition-colors"
+            className="flex items-center gap-1.5 text-sm text-on-surface-variant hover:text-primary transition-colors active:scale-95"
           >
-            <Heart className={`h-4 w-4 ${isLiked ? 'fill-error text-error' : ''}`} />
+            <Heart className={`h-4 w-4 transition-transform ${isLiked ? 'fill-error text-error' : ''}`} />
             {likeCount}
           </button>
           <span className="flex items-center gap-1.5 text-sm text-on-surface-variant">
             <MessageCircle className="h-4 w-4" />
             {mockQuestion.answersCount} answers
           </span>
-          <button className="flex items-center gap-1.5 text-sm text-on-surface-variant hover:text-primary transition-colors ml-auto">
+          <button className="flex items-center gap-1.5 text-sm text-on-surface-variant hover:text-primary transition-colors ml-auto active:scale-95">
             <Share2 className="h-4 w-4" /> Share
           </button>
         </div>
@@ -112,7 +112,7 @@ export default function QuestionDetailPage() {
               ))}
             </div>
             <Separator className="my-3" />
-            <button className="flex items-center gap-1.5 text-sm text-on-surface-variant hover:text-primary transition-colors">
+            <button className="flex items-center gap-1.5 text-sm text-on-surface-variant hover:text-primary transition-colors active:scale-95">
               <Heart className={`h-4 w-4 ${answer.isLikedByMe ? 'fill-error text-error' : ''}`} />
               {answer.likesCount}
             </button>

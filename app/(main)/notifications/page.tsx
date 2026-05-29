@@ -1,10 +1,10 @@
 'use client';
 
-import { Bell, Check, CheckCheck } from 'lucide-react';
+import { useState } from 'react';
+import Link from 'next/link';
+import { Bell, CheckCheck } from 'lucide-react';
 import { Card } from '@/components/ui/card';
-import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 
 const mockNotifications = [
   { id: '1', type: 'answer' as const, title: 'New answer on your question', content: 'Sita Poudel answered "How to solve projectile motion problems?"', link: '/forum/1', read: false, createdAt: '2025-05-29T08:00:00Z' },
@@ -15,10 +15,10 @@ const mockNotifications = [
 
 export default function NotificationsPage() {
   return (
-    <div className="px-4 lg:px-6 py-6 max-w-3xl mx-auto">
+    <div className="px-4 lg:px-6 py-6 max-w-3xl mx-auto animate-fade-in">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-semibold text-on-surface">Notifications</h1>
+          <h1 className="text-2xl font-semibold text-on-surface tracking-tight">Notifications</h1>
           <p className="text-sm text-on-surface-variant mt-1">Stay updated with activity and announcements.</p>
         </div>
         <Button variant="ghost" size="sm" iconLeft={<CheckCheck className="h-4 w-4" />}>
@@ -28,22 +28,22 @@ export default function NotificationsPage() {
 
       <div className="space-y-2">
         {mockNotifications.map(notification => (
-          <a key={notification.id} href={notification.link}>
-            <Card variant="outlined" padding="default" interactive className={`flex items-start gap-3 ${!notification.read ? 'bg-primary-container/10' : ''}`}>
+          <Link key={notification.id} href={notification.link}>
+            <Card variant="outlined" padding="default" interactive className={`flex items-start gap-3 ${!notification.read ? 'bg-primary-container/5' : ''}`}>
               <div className="flex items-center justify-center w-10 h-10 rounded-[var(--radius-full)] shrink-0 bg-surface-container-high">
                 {notification.type === 'answer' && <Bell className="h-5 w-5 text-primary" />}
-                {notification.type === 'like' && <span className="text-sm">&#9829;</span>}
-                {notification.type === 'announcement' && <span className="text-sm font-bold">!</span>}
+                {notification.type === 'like' && <span className="text-sm text-error">&#9829;</span>}
+                {notification.type === 'announcement' && <span className="text-sm font-bold text-primary">!</span>}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2">
-                  <h3 className={`text-sm font-medium text-on-surface ${!notification.read ? 'font-semibold' : ''}`}>{notification.title}</h3>
-                  {!notification.read && <span className="w-2 h-2 rounded-[var(--radius-full)] bg-primary shrink-0 mt-1.5" />}
+                  <h3 className={`text-sm ${!notification.read ? 'font-semibold text-on-surface' : 'font-medium text-on-surface'}`}>{notification.title}</h3>
+                  {!notification.read && <span className="w-2 h-2 rounded-full bg-primary shrink-0 mt-1.5" />}
                 </div>
                 <p className="text-xs text-on-surface-variant mt-0.5 line-clamp-2">{notification.content}</p>
               </div>
             </Card>
-          </a>
+          </Link>
         ))}
       </div>
     </div>

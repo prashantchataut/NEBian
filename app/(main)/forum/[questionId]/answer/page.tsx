@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { ArrowLeft, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -18,9 +19,9 @@ export default function AnswerPage() {
   return (
     <div className="px-4 lg:px-6 py-6 max-w-3xl mx-auto">
       <div className="flex items-center gap-3 mb-6">
-        <a href={`/forum/${mockQuestion.id}`} className="inline-flex items-center justify-center h-10 w-10 rounded-[var(--radius-full)] hover:bg-surface-container-high transition-colors">
+        <Link href={`/forum/${mockQuestion.id}`} className="inline-flex items-center justify-center h-10 w-10 rounded-[var(--radius-full)] hover:bg-surface-container-high transition-colors">
           <ArrowLeft className="h-5 w-5 text-on-surface" />
-        </a>
+        </Link>
         <h1 className="text-xl font-semibold text-on-surface">Write Answer</h1>
       </div>
 
@@ -46,9 +47,9 @@ export default function AnswerPage() {
         </div>
 
         <div className="flex items-center justify-end gap-3 pt-4 border-t border-outline-variant">
-          <a href={`/forum/${mockQuestion.id}`}>
+          <Link href={`/forum/${mockQuestion.id}`}>
             <Button variant="ghost" size="md">Cancel</Button>
-          </a>
+          </Link>
           <Button variant="primary" size="md" iconLeft={<Send className="h-4 w-4" />} loading={isSubmitting} disabled={!canSubmit}>
             Post Answer
           </Button>

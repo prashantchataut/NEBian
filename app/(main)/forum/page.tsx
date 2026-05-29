@@ -2,12 +2,12 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Search, Heart, MessageCircle, ArrowRight, Filter } from 'lucide-react';
+import { Search, Heart, MessageCircle, Filter } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar } from '@/components/ui/avatar';
-import { SUBJECTS, GRADES, SUBJECT_LABELS, GRADE_LABELS, type Question } from '@/types';
+import { SUBJECTS, GRADES, SUBJECT_LABELS, GRADE_LABELS, SUBJECT_COLORS, type Question } from '@/types';
 
 const mockQuestions: Question[] = [
   { id: '1', authorId: '1', author: { id: '1', name: 'Ram Sharma', email: 'ram@test.com', avatarUrl: null, grade: 'Grade11', createdAt: '2025-01-01' }, title: 'How to solve projectile motion problems in Physics?', content: 'I am struggling with projectile motion problems, especially the ones involving range and maximum height. Can someone explain the approach?', subject: 'Physics', grade: 'Grade11', tags: ['mechanics', 'projectile'], likesCount: 12, answersCount: 5, isLikedByMe: false, createdAt: '2025-05-28T10:00:00Z', updatedAt: '2025-05-28T10:00:00Z' },
@@ -42,10 +42,10 @@ export default function ForumPage() {
   });
 
   return (
-    <div className="px-4 lg:px-6 py-6 max-w-4xl mx-auto space-y-6">
+    <div className="px-4 lg:px-6 py-6 max-w-4xl mx-auto space-y-6 animate-fade-in">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-on-surface">Discussion Forum</h1>
+          <h1 className="text-2xl font-semibold text-on-surface tracking-tight">Discussion Forum</h1>
           <p className="text-sm text-on-surface-variant mt-1">Ask questions, share knowledge, and help fellow students.</p>
         </div>
         <Link href="/forum/ask">
@@ -55,13 +55,13 @@ export default function ForumPage() {
 
       <div className="flex items-center gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-on-surface-variant" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-on-surface-variant pointer-events-none" />
           <input
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search questions..."
-            className="w-full h-10 pl-10 pr-4 rounded-[var(--radius-full)] bg-surface-container-high text-on-surface text-sm placeholder:text-on-surface-variant border border-outline-variant focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
+            className="w-full h-10 pl-10 pr-4 rounded-[var(--radius-full)] bg-surface-container-high text-on-surface text-sm placeholder:text-on-surface-variant/60 border border-transparent hover:border-outline-variant focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-[border-color,box-shadow] duration-[var(--transition-fast)]"
           />
         </div>
         <Button
@@ -77,30 +77,30 @@ export default function ForumPage() {
       {showFilters && (
         <div className="space-y-4 p-4 rounded-[var(--radius-md)] bg-surface-container-low border border-outline-variant animate-slide-down">
           <div>
-            <p className="text-xs font-medium text-on-surface-variant uppercase tracking-wider mb-2">Subject</p>
+            <p className="text-xs font-semibold text-on-surface-variant uppercase tracking-widest mb-2">Subject</p>
             <div className="flex flex-wrap gap-2">
               {SUBJECTS.map(s => (
-                <button key={s} onClick={() => toggleFilter(selectedSubjects, setSelectedSubjects, s)} className={`px-3 h-7 rounded-[var(--radius-full)] text-xs font-medium transition-colors ${selectedSubjects.includes(s) ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest'}`}>
+                <button key={s} onClick={() => toggleFilter(selectedSubjects, setSelectedSubjects, s)} className={`px-3 h-7 rounded-[var(--radius-full)] text-xs font-medium transition-[background-color,color] duration-[var(--transition-fast)] ${selectedSubjects.includes(s) ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest active:bg-surface-container-highest'}`}>
                   {SUBJECT_LABELS[s]}
                 </button>
               ))}
             </div>
           </div>
           <div>
-            <p className="text-xs font-medium text-on-surface-variant uppercase tracking-wider mb-2">Grade</p>
+            <p className="text-xs font-semibold text-on-surface-variant uppercase tracking-widest mb-2">Grade</p>
             <div className="flex flex-wrap gap-2">
               {GRADES.map(g => (
-                <button key={g} onClick={() => toggleFilter(selectedGrades, setSelectedGrades, g)} className={`px-3 h-7 rounded-[var(--radius-full)] text-xs font-medium transition-colors ${selectedGrades.includes(g) ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest'}`}>
+                <button key={g} onClick={() => toggleFilter(selectedGrades, setSelectedGrades, g)} className={`px-3 h-7 rounded-[var(--radius-full)] text-xs font-medium transition-[background-color,color] duration-[var(--transition-fast)] ${selectedGrades.includes(g) ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest active:bg-surface-container-highest'}`}>
                   {GRADE_LABELS[g]}
                 </button>
               ))}
             </div>
           </div>
           <div>
-            <p className="text-xs font-medium text-on-surface-variant uppercase tracking-wider mb-2">Sort by</p>
+            <p className="text-xs font-semibold text-on-surface-variant uppercase tracking-widest mb-2">Sort by</p>
             <div className="flex flex-wrap gap-2">
               {(['newest', 'most-liked', 'unanswered'] as SortOption[]).map(s => (
-                <button key={s} onClick={() => setSortBy(s)} className={`px-3 h-7 rounded-[var(--radius-full)] text-xs font-medium transition-colors ${sortBy === s ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest'}`}>
+                <button key={s} onClick={() => setSortBy(s)} className={`px-3 h-7 rounded-[var(--radius-full)] text-xs font-medium transition-[background-color,color] duration-[var(--transition-fast)] ${sortBy === s ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest active:bg-surface-container-highest'}`}>
                   {s === 'most-liked' ? 'Most Liked' : s === 'unanswered' ? 'Unanswered' : 'Newest'}
                 </button>
               ))}
@@ -120,7 +120,7 @@ export default function ForumPage() {
                   <p className="text-xs text-on-surface-variant mt-1 line-clamp-1">{question.content}</p>
                   <div className="flex items-center gap-3 mt-2.5">
                     {question.subject && (
-                      <Badge size="sm" variant="tonal" style={{ backgroundColor: `var(--color-subject-${question.subject.charAt(0).toLowerCase() + question.subject.slice(1).replace(/([A-Z])/g, '')})`, color: '#fff' }}>
+                      <Badge size="sm" variant="tonal" style={{ backgroundColor: SUBJECT_COLORS[question.subject] || 'var(--color-outline)', color: '#fff' }}>
                         {SUBJECT_LABELS[question.subject as keyof typeof SUBJECT_LABELS]}
                       </Badge>
                     )}
@@ -142,10 +142,12 @@ export default function ForumPage() {
       </div>
 
       {filtered.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-12 text-center">
-          <MessageCircle className="h-12 w-12 text-on-surface-variant mb-3" />
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="flex items-center justify-center w-16 h-16 rounded-[var(--radius-full)] bg-surface-container-high mb-4">
+            <MessageCircle className="h-8 w-8 text-on-surface-variant" />
+          </div>
           <h3 className="text-base font-medium text-on-surface">No questions found</h3>
-          <p className="text-sm text-on-surface-variant mt-1">Be the first to ask a question!</p>
+          <p className="text-sm text-on-surface-variant mt-1 max-w-xs">Be the first to ask a question!</p>
           <Link href="/forum/ask" className="mt-4">
             <Button variant="primary" size="md">Ask Question</Button>
           </Link>
