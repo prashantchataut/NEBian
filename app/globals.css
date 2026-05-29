@@ -1,0 +1,200 @@
+@import "tailwindcss";
+
+:root {
+  --color-primary: #6750A4;
+  --color-primary-light: #D0BCFF;
+  --color-primary-dark: #4F378B;
+  --color-on-primary: #FFFFFF;
+  --color-on-primary-light: #381E72;
+  --color-secondary: #625B71;
+  --color-secondary-light: #CCC2DC;
+  --color-secondary-dark: #4A4458;
+  --color-on-secondary: #FFFFFF;
+  --color-tertiary: #7D5260;
+  --color-tertiary-light: #FFD8E4;
+  --color-tertiary-dark: #5C3F4B;
+  --color-on-tertiary: #FFFFFF;
+  --color-error: #B3261E;
+  --color-error-light: #F9DEDC;
+  --color-on-error: #FFFFFF;
+  --color-surface: #FFFBFE;
+  --color-surface-dim: #DED8E1;
+  --color-surface-bright: #FFFBFE;
+  --color-surface-container-lowest: #FFFFFF;
+  --color-surface-container-low: #F7F2FA;
+  --color-surface-container: #F3EDF7;
+  --color-surface-container-high: #ECE6F0;
+  --color-surface-container-highest: #E6E0E9;
+  --color-on-surface: #1C1B1F;
+  --color-on-surface-variant: #49454F;
+  --color-outline: #79747E;
+  --color-outline-variant: #CAC4D0;
+  --color-inverse-surface: #313033;
+  --color-inverse-on-surface: #F4EFF4;
+  --color-inverse-primary: #D0BCFF;
+  --color-background: #FFFBFE;
+  --color-on-background: #1C1B1F;
+  --color-subject-physics: #4F46E5;
+  --color-subject-chemistry: #059669;
+  --color-subject-math: #7C3AED;
+  --color-subject-biology: #0D9488;
+  --color-subject-english: #EA580C;
+  --color-subject-nepali: #DC2626;
+  --color-subject-social: #CA8A04;
+  --color-subject-computer: #2563EB;
+  --color-type-textbook: #6750A4;
+  --color-type-notes: #0061A4;
+  --color-type-pastpaper: #006E1C;
+  --color-type-practice: #B3261E;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+  --transition-fast: 150ms cubic-bezier(0.2, 0, 0, 1);
+  --transition-medium: 250ms cubic-bezier(0.2, 0, 0, 1);
+  --transition-slow: 350ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+[data-theme="dark"] {
+  --color-primary: #D0BCFF;
+  --color-primary-light: #6750A4;
+  --color-primary-dark: #EADDFF;
+  --color-on-primary: #381E72;
+  --color-on-primary-light: #D0BCFF;
+  --color-secondary: #CCC2DC;
+  --color-secondary-light: #4A4458;
+  --color-secondary-dark: #E8DEF8;
+  --color-on-secondary: #332D41;
+  --color-tertiary: #EFB8C8;
+  --color-tertiary-light: #5C3F4B;
+  --color-tertiary-dark: #FFD8E4;
+  --color-on-tertiary: #492532;
+  --color-error: #F2B8B5;
+  --color-error-light: #8C1D18;
+  --color-on-error: #601410;
+  --color-surface: #141218;
+  --color-surface-dim: #141218;
+  --color-surface-bright: #3B383E;
+  --color-surface-container-lowest: #0F0D13;
+  --color-surface-container-low: #1D1B20;
+  --color-surface-container: #211F26;
+  --color-surface-container-high: #2B2930;
+  --color-surface-container-highest: #36343B;
+  --color-on-surface: #E6E0E9;
+  --color-on-surface-variant: #CAC4D0;
+  --color-outline: #938F99;
+  --color-outline-variant: #49454F;
+  --color-inverse-surface: #E6E0E9;
+  --color-inverse-on-surface: #313033;
+  --color-inverse-primary: #6750A4;
+  --color-background: #141218;
+  --color-on-background: #E6E0E9;
+}
+
+* {
+  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-on-surface);
+  font-family: var(--font-poppins), system-ui, sans-serif;
+  min-height: 100dvh;
+}
+
+::selection {
+  background-color: var(--color-primary-light);
+  color: var(--color-on-primary-light);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.animate-fade-in { animation: fadeIn var(--transition-medium) ease-out; }
+.animate-slide-up { animation: slideUp var(--transition-medium) ease-out; }
+.animate-slide-down { animation: slideDown var(--transition-medium) ease-out; }
+.animate-scale-in { animation: scaleIn var(--transition-fast) ease-out; }
+.animate-pulse-slow { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+@theme inline {
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-on-surface);
+  --color-primary: var(--color-primary);
+  --color-primary-light: var(--color-primary-light);
+  --color-primary-dark: var(--color-primary-dark);
+  --color-on-primary: var(--color-on-primary);
+  --color-secondary: var(--color-secondary);
+  --color-secondary-light: var(--color-secondary-light);
+  --color-on-secondary: var(--color-on-secondary);
+  --color-surface: var(--color-surface);
+  --color-surface-dim: var(--color-surface-dim);
+  --color-surface-bright: var(--color-surface-bright);
+  --color-surface-container: var(--color-surface-container);
+  --color-surface-container-low: var(--color-surface-container-low);
+  --color-surface-container-high: var(--color-surface-container-high);
+  --color-surface-container-highest: var(--color-surface-container-highest);
+  --color-surface-container-lowest: var(--color-surface-container-lowest);
+  --color-on-surface: var(--color-on-surface);
+  --color-on-surface-variant: var(--color-on-surface-variant);
+  --color-outline: var(--color-outline);
+  --color-outline-variant: var(--color-outline-variant);
+  --color-error: var(--color-error);
+  --color-error-light: var(--color-error-light);
+  --color-on-error: var(--color-on-error);
+  --color-inverse-surface: var(--color-inverse-surface);
+  --color-inverse-on-surface: var(--color-inverse-on-surface);
+  --color-inverse-primary: var(--color-inverse-primary);
+  --color-subject-physics: var(--color-subject-physics);
+  --color-subject-chemistry: var(--color-subject-chemistry);
+  --color-subject-math: var(--color-subject-math);
+  --color-subject-biology: var(--color-subject-biology);
+  --color-subject-english: var(--color-subject-english);
+  --color-subject-nepali: var(--color-subject-nepali);
+  --color-subject-social: var(--color-subject-social);
+  --color-subject-computer: var(--color-subject-computer);
+  --color-type-textbook: var(--color-type-textbook);
+  --color-type-notes: var(--color-type-notes);
+  --color-type-pastpaper: var(--color-type-pastpaper);
+  --color-type-practice: var(--color-type-practice);
+  --font-poppins: var(--font-poppins);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+}

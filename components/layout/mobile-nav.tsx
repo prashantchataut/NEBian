@@ -1,0 +1,40 @@
+'use client';
+
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { Home, BookOpen, MessageCircle, Bell, Settings } from 'lucide-react';
+
+const navItems = [
+  { href: '/', label: 'Home', icon: Home },
+  { href: '/resources', label: 'Resources', icon: BookOpen },
+  { href: '/forum', label: 'Forum', icon: MessageCircle },
+  { href: '/notifications', label: 'Alerts', icon: Bell },
+  { href: '/settings', label: 'Settings', icon: Settings },
+];
+
+export function MobileNav() {
+  const pathname = usePathname();
+
+  return (
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface-container border-t border-outline-variant pb-[env(safe-area-inset-bottom)]" role="navigation" aria-label="Mobile navigation">
+      <div className="flex items-center justify-around h-16">
+        {navItems.map((item) => {
+          const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex flex-col items-center justify-center gap-0.5 min-w-[56px] py-1 transition-colors ${
+                isActive ? 'text-primary' : 'text-on-surface-variant'
+              }`}
+              aria-current={isActive ? 'page' : undefined}
+            >
+              <item.icon className="h-5 w-5" />
+              <span className="text-[10px] font-medium leading-none">{item.label}</span>
+            </Link>
+          );
+        })}
+      </div>
+    </nav>
+  );
+}
