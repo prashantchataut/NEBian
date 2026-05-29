@@ -11,7 +11,7 @@ Build NEBians - a production-grade, PWA-enabled web app for Nepali NEB students 
 - Package name: com.neb.ians
 - M3 (Material Design 3) inspired design system
 - Modern minimal UI (Linear/Notion quality)
-- Deployment: Vercel (native Next.js support)
+- Deployment: Vercel (native Next.js, auto-preview on push)
 
 ## Key Decisions:
 - Next.js 16 App Router (latest, RSC, better perf)
@@ -25,9 +25,9 @@ Build NEBians - a production-grade, PWA-enabled web app for Nepali NEB students 
 - Vercel for deployment (native Next.js, auto-preview on push)
 
 ## State:
-- Done: Project initialized, M3 design system, all core pages built, UI primitives, theme system, resource browser, PDF viewer with annotations, forum standalone screens, notifications, settings, auth pages (login/register), IndexedDB layer, Zustand stores, PWA manifest + service worker, offline banner, error/loading boundaries, pushed to GitHub
-- Now: Set up Vercel deployment, final verification
-- Next: Wire up Django backend, add real data, add PWA icons (192+512 PNG), add auth integration, performance audit
+- Done: Full NEBians app deployed to Vercel with all core features working
+- Now: Site is live, all features functional, Django backend outline created
+- Next: Wire Django backend to frontend, add real data, add proper PWA icons, performance audit
 
 ## Open Questions (UNCONFIRMED):
 - Django backend URL/endpoints (TBD when database is prioritized)
@@ -35,13 +35,17 @@ Build NEBians - a production-grade, PWA-enabled web app for Nepali NEB students 
 - Push notification VAPID keys (need to generate for production)
 
 ## Working Set (files/commands):
-- `app/` - All page routes (auth, main, forum, resources, notifications, settings)
+- `app/` - All page routes with SEO metadata (12 routes)
 - `components/` - UI primitives + layout + PDF viewer + providers
 - `hooks/` - useOfflineStatus, usePushNotifications, usePdfAnnotations
 - `lib/` - Utils, IndexedDB annotations, Fuse.js search
 - `stores/` - Zustand stores (theme, resource, forum)
 - `types/` - All TypeScript types and constants
+- `backend/` - Django outline (models, serializers, views, URLs)
 - `public/sw.js` - Service worker
 - `public/manifest.json` - PWA manifest
 - Build: `npx next build` (passes clean)
+- Lint: `npm run lint` (0 errors, 4 acceptable warnings)
+- TypeScript: `npx tsc --noEmit` (passes)
+- Live: https://nebians.vercel.app
 - Repo: https://github.com/prashantchataut/NEBian
