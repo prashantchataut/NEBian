@@ -17,15 +17,4 @@ const PdfViewer = dynamic(
   }
 );
 
-export default function ResourceDetailPage() {
-  return (
-    <PdfViewer
-      fileUrl="/sample.pdf"
-      resourceTitle="Physics Grade 11 Textbook"
-      subject="Physics"
-      grade="Grade11"
-      type="Textbook"
-      pageCount={320}
-    />
-  );
-}
+export default PdfViewer;

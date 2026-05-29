@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Poppins } from 'next/font/google';
 import { ThemeProvider } from '@/components/providers/theme-provider';
+import { AppShell } from '@/components/providers/app-shell';
 import './globals.css';
 
 const poppins = Poppins({
@@ -32,7 +33,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning className={`${poppins.variable}`}>
       <body className="min-h-dvh bg-background text-on-surface antialiased">
         <ThemeProvider>
-          {children}
+          <AppShell>
+            {children}
+          </AppShell>
         </ThemeProvider>
       </body>
     </html>
