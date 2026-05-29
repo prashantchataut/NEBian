@@ -18,7 +18,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       <Sidebar />
       <div className="lg:pl-[260px]">
         <TopBar />
-        <main className="pb-20 lg:pb-6">
+        <main className="pt-14 pb-20 lg:pb-6">
           {children}
         </main>
       </div>

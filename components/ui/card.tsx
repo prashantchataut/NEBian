@@ -28,10 +28,10 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
       <div
         ref={ref}
         className={cn(
-          'rounded-[var(--radius-md)] transition-[background-color,box-shadow,transform] duration-[var(--transition-fast)]',
+          'overflow-hidden rounded-[var(--radius-md)] transition-[background-color,box-shadow,transform] duration-[var(--transition-fast)]',
           variantStyles[variant],
           paddingStyles[padding],
-          interactive && 'cursor-pointer hover:shadow-[var(--elevation-2)] hover:-translate-y-px active:translate-y-0 active:shadow-none',
+          interactive && 'cursor-pointer hover:shadow-[var(--elevation-2)] hover:-translate-y-px active:translate-y-0 active:shadow-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
           className
         )}
         {...props}

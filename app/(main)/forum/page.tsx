@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Search, ThumbsUp, MessageCircle, Filter } from 'lucide-react';
+import { Search, Heart, MessageCircle, Filter } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -10,10 +10,10 @@ import { Avatar } from '@/components/ui/avatar';
 import { SUBJECTS, GRADES, SUBJECT_LABELS, GRADE_LABELS, SUBJECT_COLORS, type Question } from '@/types';
 
 const mockQuestions: Question[] = [
-  { id: '1', authorId: '1', author: { id: '1', name: 'Ram Sharma', email: 'ram@test.com', avatarUrl: null, grade: 'Grade11', createdAt: '2025-01-01' }, title: 'How to solve projectile motion problems in Physics?', content: 'I am struggling with projectile motion problems, especially the ones involving range and maximum height. Can someone explain the approach?', subject: 'Physics', grade: 'Grade11', tags: ['mechanics', 'projectile'], likesCount: 12, answersCount: 5, isLikedByMe: false, createdAt: '2025-05-28T10:00:00Z', updatedAt: '2025-05-28T10:00:00Z' },
-  { id: '2', authorId: '2', author: { id: '2', name: 'Sita Poudel', email: 'sita@test.com', avatarUrl: null, grade: 'Grade12', createdAt: '2025-01-01' }, title: 'Organic chemistry reaction mechanisms for NEB exam', content: 'Which reaction mechanisms are most important for the NEB chemistry exam? Aldol condensation or Cannizzaro?', subject: 'Chemistry', grade: 'Grade12', tags: ['organic', 'mechanisms'], likesCount: 8, answersCount: 3, isLikedByMe: true, createdAt: '2025-05-27T14:00:00Z', updatedAt: '2025-05-27T14:00:00Z' },
-  { id: '3', authorId: '3', author: { id: '3', name: 'Hari Thapa', email: 'hari@test.com', avatarUrl: null, grade: 'Grade11', createdAt: '2025-01-01' }, title: 'Integration techniques for NEB Mathematics', content: 'What are the most common integration techniques asked in NEB exams? Integration by parts, substitution, or partial fractions?', subject: 'Mathematics', grade: 'Grade11', tags: ['calculus', 'integration'], likesCount: 15, answersCount: 7, isLikedByMe: false, createdAt: '2025-05-26T09:00:00Z', updatedAt: '2025-05-26T09:00:00Z' },
-  { id: '4', authorId: '4', author: { id: '4', name: 'Maya Gurung', email: 'maya@test.com', avatarUrl: null, grade: 'Grade12', createdAt: '2025-01-01' }, title: 'Best resources for NEB Biology preparation?', content: 'Looking for recommendations on the best textbooks and practice materials for NEB Biology Grade 12.', subject: 'Biology', grade: 'Grade12', tags: ['resources', 'preparation'], likesCount: 20, answersCount: 9, isLikedByMe: true, createdAt: '2025-05-25T16:00:00Z', updatedAt: '2025-05-25T16:00:00Z' },
+  { id: '1', authorId: '1', author: { id: '1', name: 'Ram Sharma', username: 'ram_sharma', email: 'ram@test.com', avatarUrl: null, grade: 'Grade11', stream: 'Science', subjects: ['Physics', 'Chemistry', 'Mathematics'], contentScope: 'MyGradeOnly', province: 'Bagmati', district: 'Kathmandu', school: 'Baneshwor Campus', lockProfile: false, createdAt: '2025-01-01' }, title: 'How to solve projectile motion problems in Physics?', content: 'I am struggling with projectile motion problems, especially the ones involving range and maximum height. Can someone explain the approach?', subject: 'Physics', grade: 'Grade11', tags: ['mechanics', 'projectile'], likesCount: 12, answersCount: 5, isLikedByMe: false, createdAt: '2025-05-28T10:00:00Z', updatedAt: '2025-05-28T10:00:00Z' },
+  { id: '2', authorId: '2', author: { id: '2', name: 'Sita Poudel', username: 'sita_poudel', email: 'sita@test.com', avatarUrl: null, grade: 'Grade12', stream: 'Science', subjects: ['Physics', 'Chemistry', 'Mathematics'], contentScope: 'MyGradeOnly', province: 'Bagmati', district: 'Kathmandu', school: 'Baneshwor Campus', lockProfile: false, createdAt: '2025-01-01' }, title: 'Organic chemistry reaction mechanisms for NEB exam', content: 'Which reaction mechanisms are most important for the NEB chemistry exam? Aldol condensation or Cannizzaro?', subject: 'Chemistry', grade: 'Grade12', tags: ['organic', 'mechanisms'], likesCount: 8, answersCount: 3, isLikedByMe: true, createdAt: '2025-05-27T14:00:00Z', updatedAt: '2025-05-27T14:00:00Z' },
+  { id: '3', authorId: '3', author: { id: '3', name: 'Hari Thapa', username: 'hari_thapa', email: 'hari@test.com', avatarUrl: null, grade: 'Grade11', stream: 'Science', subjects: ['Physics', 'Chemistry', 'Mathematics'], contentScope: 'MyGradeOnly', province: 'Bagmati', district: 'Kathmandu', school: 'Baneshwor Campus', lockProfile: false, createdAt: '2025-01-01' }, title: 'Integration techniques for NEB Mathematics', content: 'What are the most common integration techniques asked in NEB exams? Integration by parts, substitution, or partial fractions?', subject: 'Mathematics', grade: 'Grade11', tags: ['calculus', 'integration'], likesCount: 15, answersCount: 7, isLikedByMe: false, createdAt: '2025-05-26T09:00:00Z', updatedAt: '2025-05-26T09:00:00Z' },
+  { id: '4', authorId: '4', author: { id: '4', name: 'Maya Gurung', username: 'maya_gurung', email: 'maya@test.com', avatarUrl: null, grade: 'Grade12', stream: 'Science', subjects: ['Physics', 'Chemistry', 'Biology'], contentScope: 'MyGradeOnly', province: 'Bagmati', district: 'Kathmandu', school: 'Baneshwor Campus', lockProfile: false, createdAt: '2025-01-01' }, title: 'Best resources for NEB Biology preparation?', content: 'Looking for recommendations on the best textbooks and practice materials for NEB Biology Grade 12.', subject: 'Biology', grade: 'Grade12', tags: ['resources', 'preparation'], likesCount: 20, answersCount: 9, isLikedByMe: true, createdAt: '2025-05-25T16:00:00Z', updatedAt: '2025-05-25T16:00:00Z' },
 ];
 
 type SortOption = 'newest' | 'most-liked' | 'unanswered';
@@ -126,7 +126,7 @@ export default function ForumPage() {
                     )}
                     {question.grade && <Badge size="sm" variant="outlined">{GRADE_LABELS[question.grade]}</Badge>}
                     <span className="flex items-center gap-1 text-xs text-on-surface-variant">
-                      <ThumbsUp className={`h-3 w-3 ${question.isLikedByMe ? 'fill-primary text-primary' : ''}`} />
+                      <Heart className={`h-3 w-3 ${question.isLikedByMe ? 'fill-current text-primary' : ''}`} />
                       {question.likesCount}
                     </span>
                     <span className="flex items-center gap-1 text-xs text-on-surface-variant">

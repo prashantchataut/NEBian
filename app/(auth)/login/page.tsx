@@ -1,32 +1,81 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
+import { login } from '@/lib/auth';
+import { ApiError } from '@/lib/api';
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    if (!email.includes('@')) {
+      newErrors.email = 'Enter a valid email address';
+    }
+    if (!password) {
+      newErrors.password = 'Password is required';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validate()) return;
+
+    setIsLoading(true);
+    try {
+      await login(email, password);
+      router.push('/');
+    } catch (err) {
+      if (err instanceof ApiError) {
+        if (err.status === 401) {
+          setErrors({ form: 'Invalid email or password' });
+        } else {
+          setErrors({ form: err.message || 'Something went wrong. Please try again.' });
+        }
+      } else {
+        setErrors({ form: 'Unable to connect. Please check your internet connection.' });
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div className="text-center">
         <h1 className="text-xl font-semibold text-on-surface tracking-tight">Welcome back</h1>
         <p className="text-sm text-on-surface-variant mt-1">Sign in to your NEBians account</p>
       </div>
 
-      <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setIsLoading(true); }}>
+      <form className="space-y-4" onSubmit={handleSubmit}>
+        {errors.form && (
+          <div className="rounded-[var(--radius-sm)] bg-error-container px-3 py-2 text-sm text-on-error-container">
+            {errors.form}
+          </div>
+        )}
         <Input
           label="Email"
           type="email"
           placeholder="you@example.com"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            if (errors.email) setErrors((prev) => ({ ...prev, email: '' }));
+          }}
           iconLeft={<Mail className="h-4 w-4" />}
+          error={errors.email}
           autoComplete="email"
         />
 
@@ -36,8 +85,12 @@ export default function LoginPage() {
             type={showPassword ? 'text' : 'password'}
             placeholder="Enter your password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              if (errors.password) setErrors((prev) => ({ ...prev, password: '' }));
+            }}
             iconLeft={<Lock className="h-4 w-4" />}
+            error={errors.password}
             autoComplete="current-password"
           />
           <button

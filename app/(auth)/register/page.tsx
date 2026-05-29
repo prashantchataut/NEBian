@@ -1,112 +1,499 @@
 'use client';
 
-import { useState } from 'react';
-import { Mail, Lock, Eye, EyeOff, User } from 'lucide-react';
+import { useState, useCallback, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  User,
+  AtSign,
+  Calendar,
+  MapPin,
+  Building2,
+  ArrowRight,
+  ArrowLeft,
+  Check,
+  GraduationCap,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { GRADES, GRADE_LABELS } from '@/types';
+import { ChipGroup } from '@/components/ui/chip-group';
+import { Toggle } from '@/components/ui/toggle';
+import { Select } from '@/components/ui/select';
+import { StepIndicator } from '@/components/ui/step-indicator';
+import {
+  STREAMS,
+  STREAM_LABELS,
+  GRADE_REQUIRES_STREAM,
+  getSubjectsForGrade,
+  SUBJECT_LABELS,
+  GRADES,
+  GRADE_LABELS,
+  GENDERS,
+  GENDER_LABELS,
+  NEPALI_PROVINCES,
+  type ProfileData,
+  type Gender,
+  type Grade,
+  type Subject,
+  type Stream,
+  type ContentScope,
+  type NepaliProvince,
+} from '@/types';
 import Link from 'next/link';
+import { register } from '@/lib/auth';
+import { ApiError } from '@/lib/api';
+
+const STEPS = [
+  { label: 'Account', icon: <Mail className="h-4 w-4" /> },
+  { label: 'Profile', icon: <User className="h-4 w-4" /> },
+  { label: 'Location', icon: <MapPin className="h-4 w-4" /> },
+];
+
+const DISTRICTS_BY_PROVINCE: Record<NepaliProvince, string[]> = {
+  Koshi: ['Bhojpur', 'Dhankuta', 'Ilam', 'Jhapa', 'Khotang', 'Morang', 'Panchthar', 'Sankhuwasabha', 'Solukhumbu', 'Sunsari', 'Taplejung', 'Terhathum', 'Udayapur'],
+  Madhesh: ['Bara', 'Dhanusha', 'Mahottari', 'Parsa', 'Saptari', 'Sarlahi', 'Siraha'],
+  Bagmati: ['Baglung', 'Chitwan', 'Dhading', 'Dolakha', 'Kathmandu', 'Kavrepalanchok', 'Lalitpur', 'Makwanpur', 'Nuwakot', 'Ramechhap', 'Rasuwa', 'Sindhuli', 'Sindhupalchok'],
+  Gandaki: ['Gorkha', 'Kaski', 'Lamjung', 'Manang', 'Mustang', 'Myagdi', 'Nawalparasi (East)', 'Parbat', 'Syangja', 'Tanahu'],
+  Lumbini: ['Arghakhanchi', 'Banke', 'Bardiya', 'Dang', 'Gulmi', 'Kapilvastu', 'Parasi (West)', 'Palpa', 'Pyuthan', 'Rolpa', 'Rukum (East)', 'Rupandehi'],
+  Karnali: ['Dailekh', 'Dolpa', 'Humla', 'Jajarkot', 'Jumla', 'Kalikot', 'Mugu', 'Rukum (West)', 'Salyan', 'Surkhet'],
+  Sudurpashchim: ['Achham', 'Baitadi', 'Darchula', 'Doti', 'Kailali', 'Kanchanpur', 'Melamchi', 'Seti'],
+};
 
 export default function RegisterPage() {
-  const [name, setName] = useState('');
+  const router = useRouter();
+  const [currentStep, setCurrentStep] = useState(0);
+  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [grade, setGrade] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const passwordsMatch = password === confirmPassword;
-  const canSubmit = name.length >= 2 && email.includes('@') && password.length >= 8 && passwordsMatch;
+  const [username, setUsername] = useState('');
+  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
+  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [gender, setGender] = useState<Gender | null>(null);
+  const [grade, setGrade] = useState<Grade | null>(null);
+  const [stream, setStream] = useState<Stream | null>(null);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+
+  const [province, setProvince] = useState<NepaliProvince | null>(null);
+  const [district, setDistrict] = useState('');
+  const [school, setSchool] = useState('');
+  const [lockProfile, setLockProfile] = useState(false);
+  const [contentScope, setContentScope] = useState<ContentScope>('MyGradeOnly');
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const showStream = grade ? GRADE_REQUIRES_STREAM[grade] : false;
+  const availableSubjects = grade ? getSubjectsForGrade(grade, stream) : [];
+
+  const validateStep = useCallback(
+    (step: number): boolean => {
+      const newErrors: Record<string, string> = {};
+
+      if (step === 0) {
+        if (!email.includes('@')) {
+          newErrors.email = 'Enter a valid email address';
+        }
+        if (password.length < 8) {
+          newErrors.password = 'Password must be at least 8 characters';
+        }
+        if (password !== confirmPassword) {
+          newErrors.confirmPassword = 'Passwords do not match';
+        }
+      } else if (step === 1) {
+        if (username.length < 3) {
+          newErrors.username = 'Username must be at least 3 characters';
+        } else if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+          newErrors.username = 'Only letters, numbers, and underscores allowed';
+        }
+        if (!dateOfBirth) {
+          newErrors.dateOfBirth = 'Date of birth is required';
+        }
+        if (!gender) {
+          newErrors.gender = 'Select your gender';
+        }
+        if (!grade) {
+          newErrors.grade = 'Select your class';
+        }
+        if (grade && GRADE_REQUIRES_STREAM[grade] && !stream) {
+          newErrors.stream = 'Select your stream';
+        }
+        if (subjects.length === 0) {
+          newErrors.subjects = 'Select at least one subject';
+        }
+      } else if (step === 2) {
+        if (!province) {
+          newErrors.province = 'Select your province';
+        }
+        if (!district) {
+          newErrors.district = 'Select your district';
+        }
+        if (!school.trim()) {
+          newErrors.school = 'Enter your school or college name';
+        }
+      }
+
+      setErrors(newErrors);
+      return Object.keys(newErrors).length === 0;
+    },
+    [email, password, confirmPassword, username, dateOfBirth, gender, grade, stream, subjects, province, district, school]
+  );
+
+  useEffect(() => {
+    if (username.length < 3 || !/^[a-zA-Z0-9_]+$/.test(username)) {
+      setUsernameStatus('idle');
+      return;
+    }
+
+    setUsernameStatus('checking');
+    const timeout = setTimeout(() => {
+      const taken = ['admin', 'test', 'user', 'root'].includes(username.toLowerCase());
+      setUsernameStatus(taken ? 'taken' : 'available');
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [username]);
+
+  useEffect(() => {
+    setSubjects([]);
+  }, [grade, stream]);
+
+  const handleNext = () => {
+    if (validateStep(currentStep)) {
+      setCompletedSteps((prev) => [...new Set([...prev, currentStep])]);
+      setCurrentStep((prev) => Math.min(prev + 1, STEPS.length - 1));
+    }
+  };
+
+  const handleBack = () => {
+    setCurrentStep((prev) => Math.max(prev - 1, 0));
+  };
+
+  const handleSubmit = async () => {
+    if (!validateStep(2)) return;
+
+    setIsLoading(true);
+    try {
+      await register({
+        email,
+        password,
+        password2: confirmPassword,
+        name: username,
+        grade: grade || '',
+      });
+      router.push('/');
+    } catch (err) {
+      if (err instanceof ApiError) {
+        const serverErrors: Record<string, string> = {};
+        if (err.data && typeof err.data === 'object') {
+          const data = err.data as Record<string, unknown>;
+          if (data.email) serverErrors.form = String(data.email);
+          else if (data.password) serverErrors.form = String(data.password);
+          else if (data.non_field_errors) serverErrors.form = String(data.non_field_errors);
+          else serverErrors.form = err.message || 'Registration failed. Please try again.';
+        } else {
+          serverErrors.form = err.message || 'Registration failed. Please try again.';
+        }
+        setErrors(serverErrors);
+      } else {
+        setErrors({ form: 'Unable to connect. Please check your internet connection.' });
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const availableDistricts = province ? DISTRICTS_BY_PROVINCE[province] : [];
 
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="text-center">
-        <h1 className="text-xl font-semibold text-on-surface tracking-tight">Create your account</h1>
-        <p className="text-sm text-on-surface-variant mt-1">Start your learning journey with NEBians</p>
+        <h1 className="text-xl font-semibold text-on-surface tracking-tight">
+          Complete Your Profile
+        </h1>
+        <p className="text-sm text-on-surface-variant mt-1">
+          NEBians community requires username and basic info to provide relevant materials.
+        </p>
       </div>
 
-      <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); if (canSubmit) setIsLoading(true); }}>
-        <Input
-          label="Full name"
-          type="text"
-          placeholder="Your name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          iconLeft={<User className="h-4 w-4" />}
-          autoComplete="name"
-        />
+      <StepIndicator
+        steps={STEPS}
+        currentStep={currentStep}
+        completedSteps={completedSteps}
+        onStepClick={(step) => {
+          if (completedSteps.includes(step) || step <= Math.max(...completedSteps, -1) + 1) {
+            setCurrentStep(step);
+          }
+        }}
+      />
 
-        <Input
-          label="Email"
-          type="email"
-          placeholder="you@example.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          iconLeft={<Mail className="h-4 w-4" />}
-          autoComplete="email"
-        />
+      <form
+        className="space-y-5"
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (currentStep === STEPS.length - 1) {
+            handleSubmit();
+          } else {
+            handleNext();
+          }
+        }}
+      >
+        {errors.form && (
+          <div className="rounded-[var(--radius-sm)] bg-error-container px-3 py-2 text-sm text-on-error-container">
+            {errors.form}
+          </div>
+        )}
+        {currentStep === 0 && (
+          <div className="space-y-4 animate-slide-up">
+            <Input
+              label="Email"
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              iconLeft={<Mail className="h-4 w-4" />}
+              error={errors.email}
+              autoComplete="email"
+            />
 
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="grade" className="text-sm font-medium text-on-surface">Grade</label>
-          <select
-            id="grade"
-            value={grade}
-            onChange={(e) => setGrade(e.target.value)}
-            className="h-10 w-full rounded-[var(--radius-sm)] border border-outline-variant bg-surface-container-lowest px-3 text-sm text-on-surface hover:border-outline focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-[border-color,box-shadow] duration-[var(--transition-fast)] appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M4%206l4%204%204-4%22%20fill%3D%22none%22%20stroke%3D%22%2379747E%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E')] bg-[length:16px] bg-[right_12px_center] bg-no-repeat pr-10"
+            <div className="relative">
+              <Input
+                label="Password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="At least 8 characters"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                iconLeft={<Lock className="h-4 w-4" />}
+                error={errors.password}
+                autoComplete="new-password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-[34px] text-on-surface-variant hover:text-on-surface transition-colors"
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+
+            <Input
+              label="Confirm password"
+              type="password"
+              placeholder="Re-enter your password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              iconLeft={<Lock className="h-4 w-4" />}
+              error={errors.confirmPassword}
+              autoComplete="new-password"
+            />
+          </div>
+        )}
+
+        {currentStep === 1 && (
+          <div className="space-y-5 animate-slide-up">
+            <div className="relative">
+              <Input
+                label="Choose Unique Username"
+                type="text"
+                placeholder="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))}
+                iconLeft={<AtSign className="h-4 w-4" />}
+                iconRight={
+                  usernameStatus === 'available' ? (
+                    <span className="text-green-600">
+                      <Check className="h-4 w-4" />
+                    </span>
+                  ) : usernameStatus === 'checking' ? (
+                    <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                  ) : undefined
+                }
+                error={errors.username || (usernameStatus === 'taken' ? 'Username is already taken' : undefined)}
+              />
+              {usernameStatus === 'available' && (
+                <p className="text-xs text-green-600 mt-1">Username is available</p>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="dob" className="text-sm font-medium text-on-surface">
+                Date of Birth
+              </label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">
+                  <Calendar className="h-4 w-4" />
+                </span>
+                <input
+                  id="dob"
+                  type="date"
+                  value={dateOfBirth}
+                  onChange={(e) => setDateOfBirth(e.target.value)}
+                  className={`w-full h-10 rounded-[var(--radius-sm)] border bg-surface-container-lowest pl-10 pr-3 text-sm text-on-surface transition-[border-color,box-shadow] duration-[var(--transition-fast)] focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent hover:border-outline ${
+                    errors.dateOfBirth ? 'border-error focus:ring-error' : 'border-outline-variant'
+                  }`}
+                />
+              </div>
+              {errors.dateOfBirth && (
+                <p className="text-xs text-error">{errors.dateOfBirth}</p>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium text-on-surface">Gender</label>
+              <ChipGroup
+                options={GENDERS.map((g) => ({ value: g, label: GENDER_LABELS[g] }))}
+                value={gender || ''}
+                onChange={(v) => setGender(v as Gender)}
+              />
+              {errors.gender && (
+                <p className="text-xs text-error">{errors.gender}</p>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium text-on-surface">Class</label>
+              <ChipGroup
+                options={GRADES.map((g) => ({ value: g, label: GRADE_LABELS[g] }))}
+                value={grade || ''}
+                onChange={(v) => {
+                  setGrade(v as Grade);
+                  setStream(null);
+                }}
+              />
+              {errors.grade && (
+                <p className="text-xs text-error">{errors.grade}</p>
+              )}
+            </div>
+
+            {showStream && (
+              <div className="flex flex-col gap-1.5 animate-slide-up">
+                <label className="text-sm font-medium text-on-surface">Stream</label>
+                <ChipGroup
+                  options={STREAMS.map((s) => ({ value: s, label: STREAM_LABELS[s] }))}
+                  value={stream || ''}
+                  onChange={(v) => setStream(v as Stream)}
+                />
+                {errors.stream && (
+                  <p className="text-xs text-error">{errors.stream}</p>
+                )}
+              </div>
+            )}
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium text-on-surface">Subjects of Interest</label>
+              <ChipGroup
+                options={availableSubjects.map((s) => ({ value: s, label: SUBJECT_LABELS[s] }))}
+                value={subjects}
+                onChange={(v) => setSubjects(v as Subject[])}
+                variant="multi"
+              />
+              {errors.subjects && (
+                <p className="text-xs text-error">{errors.subjects}</p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {currentStep === 2 && (
+          <div className="space-y-5 animate-slide-up">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium text-on-surface">Location</label>
+              <Select
+                label="Pradesh / Province"
+                value={province || ''}
+                onChange={(e) => {
+                  setProvince(e.target.value as NepaliProvince);
+                  setDistrict('');
+                }}
+                options={NEPALI_PROVINCES.map((p) => ({ value: p, label: p }))}
+                placeholder="Select your province"
+                iconLeft={<MapPin className="h-4 w-4" />}
+                error={errors.province}
+              />
+            </div>
+
+            <Select
+              label="District"
+              value={district}
+              onChange={(e) => setDistrict(e.target.value)}
+              options={availableDistricts.map((d) => ({ value: d, label: d }))}
+              placeholder={province ? 'Select your district' : 'Select province first'}
+              disabled={!province}
+              iconLeft={<MapPin className="h-4 w-4" />}
+              error={errors.district}
+            />
+
+            <Input
+              label="School / College Name"
+              type="text"
+              placeholder="Enter your school or college name"
+              value={school}
+              onChange={(e) => setSchool(e.target.value)}
+              iconLeft={<GraduationCap className="h-4 w-4" />}
+              error={errors.school}
+            />
+
+            <div className="rounded-[var(--radius-md)] bg-surface-container-low p-4 border border-outline-variant">
+              <Toggle
+                checked={lockProfile}
+                onChange={setLockProfile}
+                label="Lock Profile"
+                description="Keep profile details private. Only your username will be visible on posts."
+                id="lock-profile"
+              />
+            </div>
+
+            <div className="rounded-[var(--radius-md)] bg-surface-container-low p-4 border border-outline-variant">
+              <p className="text-sm font-medium text-on-surface mb-3">Content Scope</p>
+              <p className="text-xs text-on-surface-variant mb-3">
+                Choose whether to see resources for your grade only or all grades.
+              </p>
+              <ChipGroup
+                options={[
+                  { value: 'MyGradeOnly', label: 'My grade only' },
+                  { value: 'All', label: 'All grades' },
+                ]}
+                value={contentScope}
+                onChange={(v) => setContentScope(v as ContentScope)}
+              />
+            </div>
+          </div>
+        )}
+
+        <div className="flex items-center gap-3 pt-2">
+          {currentStep > 0 && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="lg"
+              onClick={handleBack}
+              iconLeft={<ArrowLeft className="h-4 w-4" />}
+            >
+              Back
+            </Button>
+          )}
+          <Button
+            type="submit"
+            variant="primary"
+            size="lg"
+            className="flex-1"
+            loading={isLoading}
+            iconRight={
+              currentStep === STEPS.length - 1 ? undefined : (
+                <ArrowRight className="h-4 w-4" />
+              )
+            }
           >
-            <option value="">Select your grade</option>
-            {GRADES.map(g => (
-              <option key={g} value={g}>{GRADE_LABELS[g]}</option>
-            ))}
-          </select>
+            {currentStep === STEPS.length - 1 ? 'Register & Enter NEBians' : 'Continue'}
+          </Button>
         </div>
-
-        <div className="relative">
-          <Input
-            label="Password"
-            type={showPassword ? 'text' : 'password'}
-            placeholder="At least 8 characters"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            iconLeft={<Lock className="h-4 w-4" />}
-            autoComplete="new-password"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-[34px] text-on-surface-variant hover:text-on-surface transition-colors"
-            aria-label={showPassword ? 'Hide password' : 'Show password'}
-          >
-            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-          </button>
-        </div>
-
-        <Input
-          label="Confirm password"
-          type="password"
-          placeholder="Re-enter your password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          iconLeft={<Lock className="h-4 w-4" />}
-          error={confirmPassword.length > 0 && !passwordsMatch ? 'Passwords do not match' : undefined}
-          autoComplete="new-password"
-        />
-
-        <div className="flex items-start gap-2">
-          <input
-            type="checkbox"
-            id="terms"
-            className="mt-1 h-4 w-4 rounded-[var(--radius-sm)] border-outline-variant text-primary focus:ring-primary accent-primary"
-          />
-          <label htmlFor="terms" className="text-xs text-on-surface-variant">
-            I agree to the Terms of Service and Privacy Policy
-          </label>
-        </div>
-
-        <Button type="submit" variant="primary" size="lg" className="w-full" loading={isLoading} disabled={!canSubmit}>
-          Create account
-        </Button>
       </form>
 
       <div className="relative">

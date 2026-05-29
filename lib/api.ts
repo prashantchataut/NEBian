@@ -12,6 +12,11 @@ class ApiError extends Error {
   }
 }
 
+function getAuthToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem('nebians_auth_token');
+}
+
 async function apiRequest<T>(
   endpoint: string,
   options?: RequestInit
@@ -22,6 +27,11 @@ async function apiRequest<T>(
     'Content-Type': 'application/json',
     ...options?.headers,
   };
+
+  const token = getAuthToken();
+  if (token) {
+    (headers as Record<string, string>)['Authorization'] = `Token ${token}`;
+  }
 
   const response = await fetch(url, { ...options, headers });
 

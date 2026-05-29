@@ -9,7 +9,7 @@ const navItems = [
   { href: '/', label: 'Home', icon: Home },
   { href: '/resources', label: 'Resources', icon: BookOpen },
   { href: '/forum', label: 'Forum', icon: MessageCircle },
-  { href: '/notifications', label: 'Alerts', icon: Bell },
+  { href: '/notifications', label: 'Notifications', icon: Bell },
   { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
@@ -50,7 +50,7 @@ export function Sidebar() {
         })}
       </nav>
 
-      <div className="px-3 py-4 border-t border-outline-variant">
+      <div className="px-3 py-4 border-t border-outline-variant space-y-1">
         <Link href="/settings/profile" className="flex items-center gap-3 px-4 py-2 rounded-[var(--radius-full)] hover:bg-surface-container-high transition-colors group">
           <div className="w-8 h-8 rounded-[var(--radius-full)] bg-primary-container flex items-center justify-center text-on-primary-container text-xs font-semibold transition-transform duration-[var(--transition-fast)] group-active:scale-95">
             RS
@@ -59,8 +59,8 @@ export function Sidebar() {
             <span className="text-sm font-medium text-on-surface leading-tight truncate">Ram Sharma</span>
             <span className="text-xs text-on-surface-variant">Grade 11</span>
           </div>
-          <ThemeToggle />
         </Link>
+        <ThemeToggle />
       </div>
     </aside>
   );

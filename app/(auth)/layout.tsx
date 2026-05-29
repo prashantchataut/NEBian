@@ -1,14 +1,4 @@
-import type { Metadata } from 'next';
 import Link from 'next/link';
-
-export const metadata: Metadata = {
-  title: 'Sign In',
-  description: 'Sign in to your NEBians account to access resources, forum, and PDF annotations.',
-  openGraph: {
-    title: 'Sign In - NEBians',
-    description: 'Sign in to your NEBians account to access resources, forum, and PDF annotations.',
-  },
-};
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -22,7 +12,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             <span className="text-xl font-semibold text-on-surface tracking-tight">NEBians</span>
           </Link>
         </div>
-        <div className="rounded-[var(--radius-lg)] bg-surface p-6 border border-outline-variant">
+        <div className="rounded-[var(--radius-lg)] bg-surface p-6 border border-outline-variant shadow-[var(--elevation-1)]">
           {children}
         </div>
       </div>

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { BookOpen, ThumbsUp, ArrowRight, Clock } from 'lucide-react';
+import { BookOpen, Heart, ArrowRight, Clock, MessageCircle } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { SUBJECTS, SUBJECT_COLORS, SUBJECT_LABELS } from '@/types';
@@ -15,6 +15,47 @@ const subjectIcons: Record<string, string> = {
   ComputerScience: 'CS',
 };
 
+const recentResources = [
+  {
+    subject: 'Physics' as const,
+    title: 'Physics Grade 11 Textbook',
+    description: 'Neb Edition 2081',
+    grade: 'Grade 11',
+    time: '2h ago',
+  },
+  {
+    subject: 'Chemistry' as const,
+    title: 'Organic Chemistry Notes',
+    description: 'Complete chapter-wise notes',
+    grade: 'Class 12',
+    time: '5h ago',
+  },
+  {
+    subject: 'Mathematics' as const,
+    title: 'Calculus Practice Sets',
+    description: 'With solutions and explanations',
+    grade: 'Class 11',
+    time: '1d ago',
+  },
+];
+
+const forumActivity = [
+  {
+    initials: 'RS',
+    title: 'How to solve projectile motion problems?',
+    likes: 12,
+    answers: 5,
+    liked: true,
+  },
+  {
+    initials: 'AP',
+    title: 'Balancing redox reactions in organic chemistry?',
+    likes: 8,
+    answers: 3,
+    liked: false,
+  },
+];
+
 export default function HomePage() {
   return (
     <div className="px-4 lg:px-6 py-6 max-w-5xl mx-auto space-y-8 animate-fade-in">
@@ -24,7 +65,12 @@ export default function HomePage() {
       </section>
 
       <section>
-        <h2 className="text-xs font-semibold text-on-surface-variant uppercase tracking-widest mb-3">Subjects</h2>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-xs font-semibold text-on-surface-variant uppercase tracking-widest">Subjects</h2>
+          <Link href="/resources" className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-on-primary-container transition-colors group">
+            View all <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+          </Link>
+        </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {SUBJECTS.map((subject) => (
             <Link key={subject} href={`/resources?subject=${subject}`} className="animate-slide-up">
@@ -53,22 +99,22 @@ export default function HomePage() {
           </Link>
         </div>
         <div className="space-y-3">
-          {[1, 2, 3].map((i) => (
-            <Card key={i} variant="outlined" padding="default" interactive>
+          {recentResources.map((resource) => (
+            <Card key={resource.title} variant="outlined" padding="default" interactive>
               <div className="flex items-start gap-3">
                 <div className="flex items-center justify-center w-10 h-10 rounded-[var(--radius-md)] bg-surface-container-high shrink-0">
                   <BookOpen className="h-5 w-5 text-on-surface-variant" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-medium text-on-surface truncate">Physics Grade 11 Textbook</h3>
-                  <p className="text-xs text-on-surface-variant mt-0.5">Neb Edition 2081</p>
+                  <h3 className="text-sm font-medium text-on-surface truncate">{resource.title}</h3>
+                  <p className="text-xs text-on-surface-variant mt-0.5">{resource.description}</p>
                   <div className="flex items-center gap-2 mt-2">
-                    <Badge size="sm" variant="tonal" color="var(--color-subject-physics)">Physics</Badge>
-                    <Badge size="sm" variant="outlined">Grade 11</Badge>
+                    <Badge size="sm" variant="tonal" color={SUBJECT_COLORS[resource.subject]}>{SUBJECT_LABELS[resource.subject]}</Badge>
+                    <Badge size="sm" variant="outlined">{resource.grade}</Badge>
                   </div>
                 </div>
                 <div className="flex items-center gap-1 text-xs text-on-surface-variant shrink-0">
-                  <Clock className="h-3 w-3" /> 2h ago
+                  <Clock className="h-3 w-3" /> {resource.time}
                 </div>
               </div>
             </Card>
@@ -84,19 +130,21 @@ export default function HomePage() {
           </Link>
         </div>
         <div className="space-y-3">
-          {[1, 2].map((i) => (
-            <Card key={i} variant="outlined" padding="default" interactive>
+          {forumActivity.map((post) => (
+            <Card key={post.title} variant="outlined" padding="default" interactive>
               <div className="flex items-start gap-3">
                 <div className="flex items-center justify-center w-10 h-10 rounded-[var(--radius-full)] bg-primary-container text-on-primary-container text-xs font-bold shrink-0">
-                  RS
+                  {post.initials}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-medium text-on-surface">How to solve projectile motion problems?</h3>
+                  <h3 className="text-sm font-medium text-on-surface">{post.title}</h3>
                   <div className="flex items-center gap-3 mt-1.5">
                     <span className="flex items-center gap-1 text-xs text-on-surface-variant">
-                      <ThumbsUp className="h-3 w-3" /> 12
+                      <Heart className="h-3 w-3" fill={post.liked ? 'currentColor' : 'none'} /> {post.likes}
                     </span>
-                    <span className="text-xs text-on-surface-variant">5 answers</span>
+                    <span className="flex items-center gap-1 text-xs text-on-surface-variant">
+                      <MessageCircle className="h-3 w-3" /> {post.answers} answers
+                    </span>
                   </div>
                 </div>
               </div>

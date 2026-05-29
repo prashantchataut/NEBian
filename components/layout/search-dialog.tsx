@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, FileText, MessageCircle, Clock, ArrowRight } from 'lucide-react';
+import { Search, FileText, MessageCircle, Clock, ArrowRight, X } from 'lucide-react';
 import Fuse from 'fuse.js';
 import type { Resource, Question } from '@/types';
 import { SUBJECT_LABELS, GRADE_LABELS, RESOURCE_TYPE_LABELS, SUBJECT_COLORS, RESOURCE_TYPE_COLORS } from '@/types';
@@ -17,10 +17,10 @@ const mockResources: Resource[] = [
 ];
 
 const mockQuestions: Question[] = [
-  { id: '1', authorId: '1', author: { id: '1', name: 'Ram Sharma', email: 'ram@test.com', avatarUrl: null, grade: 'Grade11', createdAt: '2025-01-01' }, title: 'How to solve projectile motion problems in Physics?', content: 'I am struggling with projectile motion problems, especially the ones involving range and maximum height.', subject: 'Physics', grade: 'Grade11', tags: ['mechanics', 'projectile'], likesCount: 12, answersCount: 5, isLikedByMe: false, createdAt: '2025-05-28T10:00:00Z', updatedAt: '2025-05-28T10:00:00Z' },
-  { id: '2', authorId: '2', author: { id: '2', name: 'Sita Poudel', email: 'sita@test.com', avatarUrl: null, grade: 'Grade12', createdAt: '2025-01-01' }, title: 'Organic chemistry reaction mechanisms for NEB exam', content: 'Which reaction mechanisms are most important for the NEB chemistry exam?', subject: 'Chemistry', grade: 'Grade12', tags: ['organic', 'mechanisms'], likesCount: 8, answersCount: 3, isLikedByMe: true, createdAt: '2025-05-27T14:00:00Z', updatedAt: '2025-05-27T14:00:00Z' },
-  { id: '3', authorId: '3', author: { id: '3', name: 'Hari Thapa', email: 'hari@test.com', avatarUrl: null, grade: 'Grade11', createdAt: '2025-01-01' }, title: 'Integration techniques for NEB Mathematics', content: 'What are the most common integration techniques asked in NEB exams?', subject: 'Mathematics', grade: 'Grade11', tags: ['calculus', 'integration'], likesCount: 15, answersCount: 7, isLikedByMe: false, createdAt: '2025-05-26T09:00:00Z', updatedAt: '2025-05-26T09:00:00Z' },
-  { id: '4', authorId: '4', author: { id: '4', name: 'Maya Gurung', email: 'maya@test.com', avatarUrl: null, grade: 'Grade12', createdAt: '2025-01-01' }, title: 'Best resources for NEB Biology preparation?', content: 'Looking for recommendations on the best textbooks and practice materials for NEB Biology Grade 12.', subject: 'Biology', grade: 'Grade12', tags: ['resources', 'preparation'], likesCount: 20, answersCount: 9, isLikedByMe: true, createdAt: '2025-05-25T16:00:00Z', updatedAt: '2025-05-25T16:00:00Z' },
+  { id: '1', authorId: '1', author: { id: '1', name: 'Ram Sharma', username: 'ram_sharma', email: 'ram@test.com', avatarUrl: null, grade: 'Grade11', stream: 'Science', subjects: ['Physics', 'Chemistry', 'Mathematics'], contentScope: 'MyGradeOnly', province: 'Bagmati', district: 'Kathmandu', school: 'Baneshwor Campus', lockProfile: false, createdAt: '2025-01-01' }, title: 'How to solve projectile motion problems in Physics?', content: 'I am struggling with projectile motion problems, especially the ones involving range and maximum height.', subject: 'Physics', grade: 'Grade11', tags: ['mechanics', 'projectile'], likesCount: 12, answersCount: 5, isLikedByMe: false, createdAt: '2025-05-28T10:00:00Z', updatedAt: '2025-05-28T10:00:00Z' },
+  { id: '2', authorId: '2', author: { id: '2', name: 'Sita Poudel', username: 'sita_poudel', email: 'sita@test.com', avatarUrl: null, grade: 'Grade12', stream: 'Science', subjects: ['Physics', 'Chemistry', 'Mathematics'], contentScope: 'MyGradeOnly', province: 'Bagmati', district: 'Kathmandu', school: 'Baneshwor Campus', lockProfile: false, createdAt: '2025-01-01' }, title: 'Organic chemistry reaction mechanisms for NEB exam', content: 'Which reaction mechanisms are most important for the NEB chemistry exam?', subject: 'Chemistry', grade: 'Grade12', tags: ['organic', 'mechanisms'], likesCount: 8, answersCount: 3, isLikedByMe: true, createdAt: '2025-05-27T14:00:00Z', updatedAt: '2025-05-27T14:00:00Z' },
+  { id: '3', authorId: '3', author: { id: '3', name: 'Hari Thapa', username: 'hari_thapa', email: 'hari@test.com', avatarUrl: null, grade: 'Grade11', stream: 'Science', subjects: ['Physics', 'Chemistry', 'Mathematics'], contentScope: 'MyGradeOnly', province: 'Bagmati', district: 'Kathmandu', school: 'Baneshwor Campus', lockProfile: false, createdAt: '2025-01-01' }, title: 'Integration techniques for NEB Mathematics', content: 'What are the most common integration techniques asked in NEB exams?', subject: 'Mathematics', grade: 'Grade11', tags: ['calculus', 'integration'], likesCount: 15, answersCount: 7, isLikedByMe: false, createdAt: '2025-05-26T09:00:00Z', updatedAt: '2025-05-26T09:00:00Z' },
+  { id: '4', authorId: '4', author: { id: '4', name: 'Maya Gurung', username: 'maya_gurung', email: 'maya@test.com', avatarUrl: null, grade: 'Grade12', stream: 'Science', subjects: ['Physics', 'Chemistry', 'Biology'], contentScope: 'MyGradeOnly', province: 'Bagmati', district: 'Kathmandu', school: 'Baneshwor Campus', lockProfile: false, createdAt: '2025-01-01' }, title: 'Best resources for NEB Biology preparation?', content: 'Looking for recommendations on the best textbooks and practice materials for NEB Biology Grade 12.', subject: 'Biology', grade: 'Grade12', tags: ['resources', 'preparation'], likesCount: 20, answersCount: 9, isLikedByMe: true, createdAt: '2025-05-25T16:00:00Z', updatedAt: '2025-05-25T16:00:00Z' },
 ];
 
 type SearchResult = {
@@ -182,6 +182,14 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
           <kbd className="hidden sm:inline-flex items-center h-5 px-1.5 rounded-[var(--radius-sm)] bg-surface-container-high text-[10px] font-medium text-on-surface-variant border border-outline-variant">
             ESC
           </kbd>
+          <button
+            type="button"
+            onClick={onClose}
+            className="inline-flex items-center justify-center h-8 w-8 rounded-[var(--radius-sm)] text-on-surface-variant hover:bg-surface-container-high transition-[background-color] duration-[var(--transition-fast)]"
+            aria-label="Close search"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </div>
 
         <div className="max-h-[50vh] overflow-y-auto">

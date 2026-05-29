@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Bell, ThumbsUp, Megaphone, CheckCheck } from 'lucide-react';
+import { Bell, Heart, Megaphone, CheckCheck } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -25,7 +25,7 @@ const initialNotifications: Notification[] = [
 
 const notificationIcons: Record<string, React.ReactNode> = {
   answer: <Bell className="h-5 w-5 text-primary" />,
-  like: <ThumbsUp className="h-5 w-5 text-primary" />,
+  like: <Heart className="h-5 w-5 text-primary" />,
   announcement: <Megaphone className="h-5 w-5 text-primary" />,
 };
 

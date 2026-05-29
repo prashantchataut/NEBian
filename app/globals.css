@@ -52,6 +52,10 @@
   --color-subject-nepali: #DC2626;
   --color-subject-social: #CA8A04;
   --color-subject-computer: #2563EB;
+  --color-subject-accountancy: #0D9488;
+  --color-subject-economics: #CA8A04;
+  --color-subject-optionalmathematics: #7C3AED;
+  --color-subject-science: #059669;
   --color-type-textbook: #6750A4;
   --color-type-notes: #0061A4;
   --color-type-pastpaper: #006E1C;
@@ -245,6 +249,10 @@ body {
   --color-subject-nepali: var(--color-subject-nepali);
   --color-subject-social: var(--color-subject-social);
   --color-subject-computer: var(--color-subject-computer);
+  --color-subject-accountancy: var(--color-subject-accountancy);
+  --color-subject-economics: var(--color-subject-economics);
+  --color-subject-optionalmathematics: var(--color-subject-optionalmathematics);
+  --color-subject-science: var(--color-subject-science);
   --color-type-textbook: var(--color-type-textbook);
   --color-type-notes: var(--color-type-notes);
   --color-type-pastpaper: var(--color-type-pastpaper);

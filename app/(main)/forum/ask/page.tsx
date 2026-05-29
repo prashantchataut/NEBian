@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,12 +10,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { SUBJECTS, GRADES, SUBJECT_LABELS, GRADE_LABELS } from '@/types';
 
 export default function AskQuestionPage() {
+  const router = useRouter();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [subject, setSubject] = useState('');
   const [grade, setGrade] = useState('');
   const [tags, setTags] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const canSubmit = title.length >= 10 && content.length >= 20 && subject;
 
@@ -22,7 +25,16 @@ export default function AskQuestionPage() {
     e.preventDefault();
     if (!canSubmit) return;
     setIsSubmitting(true);
-    setTimeout(() => setIsSubmitting(false), 2000);
+    setTimeout(() => {
+      setTitle('');
+      setContent('');
+      setSubject('');
+      setGrade('');
+      setTags('');
+      setIsSubmitting(false);
+      setSuccess(true);
+      setTimeout(() => router.push('/forum'), 1000);
+    }, 2000);
   };
 
   return (
@@ -93,13 +105,19 @@ export default function AskQuestionPage() {
           helperText="Separate tags with commas"
         />
 
+        {success && (
+          <div className="rounded-[var(--radius-md)] bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 px-4 py-3 text-sm text-green-700 dark:text-green-300 text-center">
+            Question posted!
+          </div>
+        )}
+
         <div className="flex items-center justify-end gap-3 pt-4 border-t border-outline-variant">
           <Link href="/forum">
             <Button variant="ghost" size="md">Cancel</Button>
           </Link>
-          <Button variant="primary" size="md" iconLeft={<Send className="h-4 w-4" />} loading={isSubmitting} disabled={!canSubmit}>
+          <Button variant="primary" size="md" iconLeft={<Send className="h-4 w-4" />} loading={isSubmitting} disabled={!canSubmit || success}>
             Post Question
-          </Button>
+            </Button>
         </div>
       </form>
     </div>

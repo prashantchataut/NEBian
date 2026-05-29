@@ -1,13 +1,28 @@
 'use client';
 
+import { useState } from 'react';
 import { useTheme } from 'next-themes';
 import { Moon, Sun, Monitor, Trash2, Download, HardDrive, ChevronRight, User } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { Toggle } from '@/components/ui/toggle';
+import { ChipGroup } from '@/components/ui/chip-group';
+import { ContentScope, GRADE_LABELS } from '@/types';
 import Link from 'next/link';
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
+  const [notifications, setNotifications] = useState({
+    announcements: true,
+    answers: true,
+    likes: false,
+  });
+  const [contentScope, setContentScope] = useState<ContentScope>('MyGradeOnly');
+
+  const contentScopeOptions = [
+    { value: 'MyGradeOnly', label: 'My Grade Only' },
+    { value: 'All', label: 'All Grades' },
+  ];
 
   return (
     <div className="px-4 lg:px-6 py-6 max-w-2xl mx-auto space-y-6 animate-fade-in">
@@ -54,17 +69,35 @@ export default function SettingsPage() {
       </Card>
 
       <Card variant="outlined" padding="default">
+        <h2 className="text-xs font-semibold text-on-surface-variant uppercase tracking-widest mb-3">Content Scope</h2>
+        <p className="text-sm text-on-surface-variant mb-3">Choose whether to see resources for your grade only or all grades.</p>
+        <ChipGroup
+          options={contentScopeOptions}
+          value={contentScope}
+          onChange={(v) => setContentScope(v as ContentScope)}
+          variant="single"
+          size="sm"
+        />
+      </Card>
+
+      <Card variant="outlined" padding="default">
         <h2 className="text-xs font-semibold text-on-surface-variant uppercase tracking-widest mb-3">Notifications</h2>
         <div className="space-y-3">
-          {['Important announcements', 'Answers to your questions', 'Likes on your posts'].map(item => (
-            <div key={item} className="flex items-center justify-between">
-              <span className="text-sm text-on-surface">{item}</span>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" defaultChecked className="sr-only peer" />
-                <div className="w-9 h-5 bg-surface-container-highest peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary rounded-full peer peer-checked:bg-primary transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-on-surface after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full peer-checked:after:bg-on-primary"></div>
-              </label>
-            </div>
-          ))}
+          <Toggle
+            label="Important announcements"
+            checked={notifications.announcements}
+            onChange={(checked) => setNotifications(prev => ({ ...prev, announcements: checked }))}
+          />
+          <Toggle
+            label="Answers to your questions"
+            checked={notifications.answers}
+            onChange={(checked) => setNotifications(prev => ({ ...prev, answers: checked }))}
+          />
+          <Toggle
+            label="Likes on your posts"
+            checked={notifications.likes}
+            onChange={(checked) => setNotifications(prev => ({ ...prev, likes: checked }))}
+          />
         </div>
       </Card>
 
@@ -79,7 +112,10 @@ export default function SettingsPage() {
                 <p className="text-xs text-on-surface-variant">3 files, 24.5 MB</p>
               </div>
             </div>
-            <button className="inline-flex items-center justify-center h-8 px-3 rounded-[var(--radius-full)] text-xs font-medium text-on-surface-variant hover:bg-surface-container-high active:bg-surface-container-highest transition-[background-color] duration-[var(--transition-fast)]">
+            <button
+              onClick={() => {}}
+              className="inline-flex items-center justify-center h-8 px-3 rounded-[var(--radius-full)] text-xs font-medium text-on-surface-variant hover:bg-surface-container-high active:bg-surface-container-highest transition-[background-color] duration-[var(--transition-fast)]"
+            >
               Clear
             </button>
           </div>
@@ -91,7 +127,10 @@ export default function SettingsPage() {
                 <p className="text-xs text-on-surface-variant">12 annotations saved</p>
               </div>
             </div>
-            <button className="inline-flex items-center justify-center h-8 px-3 rounded-[var(--radius-full)] text-xs font-medium text-on-surface-variant hover:bg-surface-container-high active:bg-surface-container-highest transition-[background-color] duration-[var(--transition-fast)]">
+            <button
+              onClick={() => {}}
+              className="inline-flex items-center justify-center h-8 px-3 rounded-[var(--radius-full)] text-xs font-medium text-on-surface-variant hover:bg-surface-container-high active:bg-surface-container-highest transition-[background-color] duration-[var(--transition-fast)]"
+            >
               Clear
             </button>
           </div>
