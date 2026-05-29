@@ -3,11 +3,12 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Send } from 'lucide-react';
+import { ArrowLeft, Send, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { SUBJECTS, GRADES, SUBJECT_LABELS, GRADE_LABELS } from '@/types';
+import { forumService } from '@/lib/services';
 
 export default function AskQuestionPage() {
   const router = useRouter();
@@ -18,23 +19,35 @@ export default function AskQuestionPage() {
   const [tags, setTags] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const canSubmit = title.length >= 10 && content.length >= 20 && subject;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!canSubmit) return;
     setIsSubmitting(true);
-    setTimeout(() => {
+    setError(null);
+    try {
+      await forumService.createQuestion({
+        title,
+        content,
+        subject,
+        grade: grade || undefined,
+        tags: tags ? tags.split(',').map(t => t.trim()).filter(Boolean) : undefined,
+      });
       setTitle('');
       setContent('');
       setSubject('');
       setGrade('');
       setTags('');
-      setIsSubmitting(false);
       setSuccess(true);
       setTimeout(() => router.push('/forum'), 1000);
-    }, 2000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to post question');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -104,6 +117,13 @@ export default function AskQuestionPage() {
           onChange={(e) => setTags(e.target.value)}
           helperText="Separate tags with commas"
         />
+
+        {error && (
+          <div className="rounded-[var(--radius-md)] bg-error-container/20 border border-error px-4 py-3 text-sm text-on-error-container flex items-center gap-2">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            {error}
+          </div>
+        )}
 
         {success && (
           <div className="rounded-[var(--radius-md)] bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 px-4 py-3 text-sm text-green-700 dark:text-green-300 text-center">

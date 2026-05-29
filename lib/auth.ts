@@ -1,6 +1,6 @@
 'use client';
 
-import { api, ApiError } from './api';
+import { api } from './api';
 
 export interface AuthUser {
   id: number;

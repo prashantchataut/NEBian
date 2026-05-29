@@ -1,8 +1,13 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { BookOpen, Heart, ArrowRight, Clock, MessageCircle } from 'lucide-react';
+import { BookOpen, Heart, ArrowRight, Clock, MessageCircle, AlertCircle, RefreshCw } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { SUBJECTS, SUBJECT_COLORS, SUBJECT_LABELS } from '@/types';
+import { Button } from '@/components/ui/button';
+import { SUBJECTS, SUBJECT_COLORS, SUBJECT_LABELS, type Resource, type Question } from '@/types';
+import { resourceService, forumService } from '@/lib/services';
 
 const subjectIcons: Record<string, string> = {
   Physics: 'P',
@@ -15,48 +20,47 @@ const subjectIcons: Record<string, string> = {
   ComputerScience: 'CS',
 };
 
-const recentResources = [
-  {
-    subject: 'Physics' as const,
-    title: 'Physics Grade 11 Textbook',
-    description: 'Neb Edition 2081',
-    grade: 'Grade 11',
-    time: '2h ago',
-  },
-  {
-    subject: 'Chemistry' as const,
-    title: 'Organic Chemistry Notes',
-    description: 'Complete chapter-wise notes',
-    grade: 'Class 12',
-    time: '5h ago',
-  },
-  {
-    subject: 'Mathematics' as const,
-    title: 'Calculus Practice Sets',
-    description: 'With solutions and explanations',
-    grade: 'Class 11',
-    time: '1d ago',
-  },
-];
-
-const forumActivity = [
-  {
-    initials: 'RS',
-    title: 'How to solve projectile motion problems?',
-    likes: 12,
-    answers: 5,
-    liked: true,
-  },
-  {
-    initials: 'AP',
-    title: 'Balancing redox reactions in organic chemistry?',
-    likes: 8,
-    answers: 3,
-    liked: false,
-  },
-];
-
 export default function HomePage() {
+  const [recentResources, setRecentResources] = useState<Resource[]>([]);
+  const [forumActivity, setForumActivity] = useState<Question[]>([]);
+  const [isLoadingResources, setIsLoadingResources] = useState(true);
+  const [isLoadingForum, setIsLoadingForum] = useState(true);
+  const [resourcesError, setResourcesError] = useState<string | null>(null);
+  const [forumError, setForumError] = useState<string | null>(null);
+
+  const fetchResources = () => {
+    setIsLoadingResources(true);
+    setResourcesError(null);
+    resourceService.getAll()
+      .then((data) => setRecentResources(data.slice(0, 3)))
+      .catch((err) => setResourcesError(err instanceof Error ? err.message : 'Failed to load resources'))
+      .finally(() => setIsLoadingResources(false));
+  };
+
+  const fetchForumActivity = () => {
+    setIsLoadingForum(true);
+    setForumError(null);
+    forumService.getQuestions({ sort: 'newest' })
+      .then((data) => setForumActivity(data.slice(0, 2)))
+      .catch((err) => setForumError(err instanceof Error ? err.message : 'Failed to load forum activity'))
+      .finally(() => setIsLoadingForum(false));
+  };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial data fetch
+    fetchResources();
+    fetchForumActivity();
+  }, []);
+
+  const formatTimeAgo = (dateStr: string) => {
+    const diff = new Date().getTime() - new Date(dateStr).getTime();
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    if (hours < 1) return 'Just now';
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    return `${days}d ago`;
+  };
+
   return (
     <div className="px-4 lg:px-6 py-6 max-w-5xl mx-auto space-y-8 animate-fade-in">
       <section>
@@ -99,26 +103,50 @@ export default function HomePage() {
           </Link>
         </div>
         <div className="space-y-3">
-          {recentResources.map((resource) => (
-            <Card key={resource.title} variant="outlined" padding="default" interactive>
-              <div className="flex items-start gap-3">
-                <div className="flex items-center justify-center w-10 h-10 rounded-[var(--radius-md)] bg-surface-container-high shrink-0">
-                  <BookOpen className="h-5 w-5 text-on-surface-variant" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-medium text-on-surface truncate">{resource.title}</h3>
-                  <p className="text-xs text-on-surface-variant mt-0.5">{resource.description}</p>
-                  <div className="flex items-center gap-2 mt-2">
-                    <Badge size="sm" variant="tonal" color={SUBJECT_COLORS[resource.subject]}>{SUBJECT_LABELS[resource.subject]}</Badge>
-                    <Badge size="sm" variant="outlined">{resource.grade}</Badge>
+          {resourcesError ? (
+            <div className="flex flex-col items-center justify-center py-8 text-center">
+              <AlertCircle className="h-6 w-6 text-on-error-container mb-2" />
+              <p className="text-sm text-on-surface-variant">{resourcesError}</p>
+              <Button variant="ghost" size="sm" iconLeft={<RefreshCw className="h-3 w-3" />} onClick={fetchResources} className="mt-2">
+                Retry
+              </Button>
+            </div>
+          ) : isLoadingResources ? (
+            Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="rounded-[var(--radius-md)] border border-outline-variant p-4 animate-pulse">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-[var(--radius-md)] bg-surface-container-highest shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-surface-container-highest rounded w-2/3" />
+                    <div className="h-3 bg-surface-container-highest rounded w-1/2" />
                   </div>
                 </div>
-                <div className="flex items-center gap-1 text-xs text-on-surface-variant shrink-0">
-                  <Clock className="h-3 w-3" /> {resource.time}
-                </div>
               </div>
-            </Card>
-          ))}
+            ))
+          ) : (
+            recentResources.map((resource) => (
+              <Link key={resource.id} href={`/resources/${resource.id}`}>
+                <Card variant="outlined" padding="default" interactive>
+                  <div className="flex items-start gap-3">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-[var(--radius-md)] bg-surface-container-high shrink-0">
+                      <BookOpen className="h-5 w-5 text-on-surface-variant" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-sm font-medium text-on-surface truncate">{resource.title}</h3>
+                      <p className="text-xs text-on-surface-variant mt-0.5">{resource.description}</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <Badge size="sm" variant="tonal" color={SUBJECT_COLORS[resource.subject]}>{SUBJECT_LABELS[resource.subject]}</Badge>
+                        <Badge size="sm" variant="outlined">{resource.grade}</Badge>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs text-on-surface-variant shrink-0">
+                      <Clock className="h-3 w-3" /> {formatTimeAgo(resource.createdAt)}
+                    </div>
+                  </div>
+                </Card>
+              </Link>
+            ))
+          )}
         </div>
       </section>
 
@@ -130,26 +158,50 @@ export default function HomePage() {
           </Link>
         </div>
         <div className="space-y-3">
-          {forumActivity.map((post) => (
-            <Card key={post.title} variant="outlined" padding="default" interactive>
-              <div className="flex items-start gap-3">
-                <div className="flex items-center justify-center w-10 h-10 rounded-[var(--radius-full)] bg-primary-container text-on-primary-container text-xs font-bold shrink-0">
-                  {post.initials}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-medium text-on-surface">{post.title}</h3>
-                  <div className="flex items-center gap-3 mt-1.5">
-                    <span className="flex items-center gap-1 text-xs text-on-surface-variant">
-                      <Heart className="h-3 w-3" fill={post.liked ? 'currentColor' : 'none'} /> {post.likes}
-                    </span>
-                    <span className="flex items-center gap-1 text-xs text-on-surface-variant">
-                      <MessageCircle className="h-3 w-3" /> {post.answers} answers
-                    </span>
+          {forumError ? (
+            <div className="flex flex-col items-center justify-center py-8 text-center">
+              <AlertCircle className="h-6 w-6 text-on-error-container mb-2" />
+              <p className="text-sm text-on-surface-variant">{forumError}</p>
+              <Button variant="ghost" size="sm" iconLeft={<RefreshCw className="h-3 w-3" />} onClick={fetchForumActivity} className="mt-2">
+                Retry
+              </Button>
+            </div>
+          ) : isLoadingForum ? (
+            Array.from({ length: 2 }).map((_, i) => (
+              <div key={i} className="rounded-[var(--radius-md)] border border-outline-variant p-4 animate-pulse">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-[var(--radius-full)] bg-surface-container-highest shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-surface-container-highest rounded w-3/4" />
+                    <div className="h-3 bg-surface-container-highest rounded w-1/3" />
                   </div>
                 </div>
               </div>
-            </Card>
-          ))}
+            ))
+          ) : (
+            forumActivity.map((post) => (
+              <Link key={post.id} href={`/forum/${post.id}`}>
+                <Card variant="outlined" padding="default" interactive>
+                  <div className="flex items-start gap-3">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-[var(--radius-full)] bg-primary-container text-on-primary-container text-xs font-bold shrink-0">
+                      {post.author.name.split(' ').map(n => n[0]).join('')}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-sm font-medium text-on-surface">{post.title}</h3>
+                      <div className="flex items-center gap-3 mt-1.5">
+                        <span className="flex items-center gap-1 text-xs text-on-surface-variant">
+                          <Heart className="h-3 w-3" fill={post.isLikedByMe ? 'currentColor' : 'none'} /> {post.likesCount}
+                        </span>
+                        <span className="flex items-center gap-1 text-xs text-on-surface-variant">
+                          <MessageCircle className="h-3 w-3" /> {post.answersCount} answers
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </Link>
+            ))
+          )}
         </div>
       </section>
     </div>

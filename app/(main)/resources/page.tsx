@@ -1,34 +1,47 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Search, SlidersHorizontal, BookOpen, Download } from 'lucide-react';
+import { Search, SlidersHorizontal, BookOpen, Download, AlertCircle, RefreshCw } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { SUBJECTS, GRADES, RESOURCE_TYPES, SUBJECT_LABELS, GRADE_LABELS, RESOURCE_TYPE_LABELS, SUBJECT_COLORS, RESOURCE_TYPE_COLORS, type Resource } from '@/types';
-
-const mockResources: Resource[] = [
-  { id: '1', title: 'Physics Grade 11 Textbook', description: 'Complete NEB physics textbook for Grade 11 students', subject: 'Physics', grade: 'Grade11', type: 'Textbook', fileUrl: '/papers/physics-11.pdf', fileSize: 15728640, thumbnailUrl: null, pageCount: 320, downloadCount: 1245, createdAt: '2025-01-15', updatedAt: '2025-01-15' },
-  { id: '2', title: 'Chemistry Grade 12 Notes', description: 'Comprehensive chemistry notes for NEB exam preparation', subject: 'Chemistry', grade: 'Grade12', type: 'Notes', fileUrl: '/papers/chem-12.pdf', fileSize: 5242880, thumbnailUrl: null, pageCount: 85, downloadCount: 892, createdAt: '2025-02-01', updatedAt: '2025-02-01' },
-  { id: '3', title: 'Mathematics Grade 11 Past Paper 2080', description: 'NEB Mathematics past paper with solutions', subject: 'Mathematics', grade: 'Grade11', type: 'PastPaper', fileUrl: '/papers/math-11-pp.pdf', fileSize: 2097152, thumbnailUrl: null, pageCount: 24, downloadCount: 2341, createdAt: '2025-03-10', updatedAt: '2025-03-10' },
-  { id: '4', title: 'Biology Grade 12 Practice Set', description: 'Practice problems for NEB Biology Grade 12', subject: 'Biology', grade: 'Grade12', type: 'PracticeSet', fileUrl: '/papers/bio-12-ps.pdf', fileSize: 3145728, thumbnailUrl: null, pageCount: 48, downloadCount: 567, createdAt: '2025-04-05', updatedAt: '2025-04-05' },
-  { id: '5', title: 'English Grade 10 Textbook', description: 'NEB English textbook for SEE preparation', subject: 'English', grade: 'Grade10', type: 'Textbook', fileUrl: '/papers/eng-10.pdf', fileSize: 10485760, thumbnailUrl: null, pageCount: 200, downloadCount: 3100, createdAt: '2025-01-20', updatedAt: '2025-01-20' },
-  { id: '6', title: 'Nepali Grade 11 Notes', description: 'Detailed notes for NEB Nepali subject', subject: 'Nepali', grade: 'Grade11', type: 'Notes', fileUrl: '/papers/nep-11.pdf', fileSize: 4194304, thumbnailUrl: null, pageCount: 120, downloadCount: 780, createdAt: '2025-02-15', updatedAt: '2025-02-15' },
-];
+import { resourceService } from '@/lib/services';
+import { useResourceStore } from '@/stores/resource-store';
 
 export default function ResourcesPage() {
+  const [resources, setResources] = useState<Resource[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
   const [selectedGrades, setSelectedGrades] = useState<string[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
+  const storeSetResources = useResourceStore((s) => s.setResources);
+
+  const fetchResources = () => {
+    setIsLoading(true);
+    setError(null);
+    resourceService.getAll()
+      .then((data) => {
+        setResources(data);
+        storeSetResources(data);
+      })
+      .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load resources'))
+      .finally(() => setIsLoading(false));
+  };
+
+useEffect(() => {
+    resourceService.getAll().then(setResources).finally(() => setIsLoading(false));
+  }, []);
 
   const toggleFilter = (arr: string[], setArr: (v: string[]) => void, val: string) => {
     setArr(arr.includes(val) ? arr.filter(v => v !== val) : [...arr, val]);
   };
 
-  const filtered = mockResources.filter(r => {
+  const filtered = resources.filter(r => {
     if (search && !r.title.toLowerCase().includes(search.toLowerCase())) return false;
     if (selectedSubjects.length && !selectedSubjects.includes(r.subject)) return false;
     if (selectedGrades.length && !selectedGrades.includes(r.grade)) return false;
@@ -126,6 +139,36 @@ export default function ResourcesPage() {
         </div>
       )}
 
+      {error ? (
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="flex items-center justify-center w-16 h-16 rounded-[var(--radius-full)] bg-error-container mb-4">
+            <AlertCircle className="h-8 w-8 text-on-error-container" />
+          </div>
+          <h3 className="text-base font-medium text-on-surface">Failed to load resources</h3>
+          <p className="text-sm text-on-surface-variant mt-1 max-w-xs">{error}</p>
+          <Button variant="outline" size="md" iconLeft={<RefreshCw className="h-4 w-4" />} onClick={fetchResources} className="mt-4">
+            Retry
+          </Button>
+        </div>
+      ) : isLoading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="rounded-[var(--radius-md)] border border-outline-variant p-4 animate-pulse">
+              <div className="flex items-start gap-3 mb-3">
+                <div className="w-10 h-10 rounded-[var(--radius-md)] bg-surface-container-highest shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 bg-surface-container-highest rounded w-3/4" />
+                  <div className="h-3 bg-surface-container-highest rounded w-1/2" />
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <div className="h-5 w-16 bg-surface-container-highest rounded-full" />
+                <div className="h-5 w-14 bg-surface-container-highest rounded-full" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {filtered.map((resource, index) => (
           <Link key={resource.id} href={`/resources/${resource.id}`} className={`block animate-slide-up stagger-${Math.min(index + 1, 8)}`}>
@@ -159,8 +202,9 @@ export default function ResourcesPage() {
           </Link>
         ))}
       </div>
+      )}
 
-      {filtered.length === 0 && (
+      {!isLoading && filtered.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="flex items-center justify-center w-16 h-16 rounded-[var(--radius-full)] bg-surface-container-high mb-4">
             <BookOpen className="h-8 w-8 text-on-surface-variant" />

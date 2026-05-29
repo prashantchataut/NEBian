@@ -11,7 +11,6 @@ import {
   AtSign,
   Calendar,
   MapPin,
-  Building2,
   ArrowRight,
   ArrowLeft,
   Check,
@@ -34,7 +33,6 @@ import {
   GENDERS,
   GENDER_LABELS,
   NEPALI_PROVINCES,
-  type ProfileData,
   type Gender,
   type Grade,
   type Subject,
@@ -147,6 +145,7 @@ export default function RegisterPage() {
 
   useEffect(() => {
     if (username.length < 3 || !/^[a-zA-Z0-9_]+$/.test(username)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- username availability check
       setUsernameStatus('idle');
       return;
     }
@@ -161,6 +160,7 @@ export default function RegisterPage() {
   }, [username]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset subjects when grade/stream changes
     setSubjects([]);
   }, [grade, stream]);
 

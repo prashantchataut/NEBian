@@ -1,5 +1,35 @@
-import type { Resource, Question, Answer, Notification, User } from '@/types';
+import type { Resource, Question, Notification } from '@/types';
 import { api } from './api';
+
+const SUBJECT_TO_BACKEND: Record<string, string> = {
+  Physics: 'physics', Chemistry: 'chemistry', Mathematics: 'mathematics',
+  Biology: 'biology', English: 'english', Nepali: 'nepali',
+  SocialStudies: 'social_studies', ComputerScience: 'computer_science',
+  Accountancy: 'accountancy', Economics: 'economics',
+  OptionalMathematics: 'optional_mathematics', Science: 'science',
+};
+
+const SUBJECT_FROM_BACKEND: Record<string, string> = {
+  physics: 'Physics', chemistry: 'Chemistry', mathematics: 'Mathematics',
+  biology: 'Biology', english: 'English', nepali: 'Nepali',
+  social_studies: 'SocialStudies', computer_science: 'ComputerScience',
+  accountancy: 'Accountancy', economics: 'Economics',
+  optional_mathematics: 'OptionalMathematics', science: 'Science',
+};
+
+const GRADE_TO_BACKEND: Record<string, string> = {
+  Grade10: '10', Grade11: '11', Grade12: '12', BothPassout: 'both_passout',
+};
+const GRADE_FROM_BACKEND: Record<string, string> = {
+  '10': 'Grade10', '11': 'Grade11', '12': 'Grade12', both_passout: 'BothPassout',
+};
+
+const TYPE_TO_BACKEND: Record<string, string> = {
+  Textbook: 'textbook', Notes: 'notes', PastPaper: 'past_paper', PracticeSet: 'practice_set',
+};
+const TYPE_FROM_BACKEND: Record<string, string> = {
+  textbook: 'Textbook', notes: 'Notes', past_paper: 'PastPaper', practice_set: 'PracticeSet',
+};
 
 const USE_MOCK = !process.env.NEXT_PUBLIC_API_URL;
 
@@ -32,7 +62,18 @@ export const resourceService = {
       }
       return filtered;
     }
-    return api.get<Resource[]>('/resources/', params as Record<string, string>);
+    const backendParams: Record<string, string> = {};
+    if (params?.subject) backendParams.subject = SUBJECT_TO_BACKEND[params.subject] ?? params.subject;
+    if (params?.grade) backendParams.grade = GRADE_TO_BACKEND[params.grade] ?? params.grade;
+    if (params?.type) backendParams.type = TYPE_TO_BACKEND[params.type] ?? params.type;
+    if (params?.search) backendParams.search = params.search;
+    const resources = await api.get<Resource[]>('/resources/', backendParams);
+    return resources.map((r: Resource) => ({
+      ...r,
+      subject: (SUBJECT_FROM_BACKEND[r.subject] ?? r.subject) as Resource['subject'],
+      grade: (GRADE_FROM_BACKEND[r.grade] ?? r.grade) as Resource['grade'],
+      type: (TYPE_FROM_BACKEND[r.type] ?? r.type) as Resource['type'],
+    }));
   },
 
   getById: async (id: string): Promise<Resource> => {
@@ -41,7 +82,13 @@ export const resourceService = {
       if (!resource) throw new Error('Resource not found');
       return resource;
     }
-    return api.get<Resource>(`/resources/${id}/`);
+    const resource = await api.get<Resource>(`/resources/${id}/`);
+    return {
+      ...resource,
+      subject: (SUBJECT_FROM_BACKEND[resource.subject] ?? resource.subject) as Resource['subject'],
+      grade: (GRADE_FROM_BACKEND[resource.grade] ?? resource.grade) as Resource['grade'],
+      type: (TYPE_FROM_BACKEND[resource.type] ?? resource.type) as Resource['type'],
+    };
   },
 };
 

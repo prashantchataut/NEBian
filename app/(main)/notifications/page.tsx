@@ -1,27 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Bell, Heart, Megaphone, CheckCheck } from 'lucide-react';
+import { Bell, Heart, Megaphone, CheckCheck, AlertCircle, RefreshCw } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-
-type Notification = {
-  id: string;
-  type: 'answer' | 'like' | 'announcement';
-  title: string;
-  content: string;
-  link: string;
-  read: boolean;
-  createdAt: string;
-};
-
-const initialNotifications: Notification[] = [
-  { id: '1', type: 'answer', title: 'New answer on your question', content: 'Sita Poudel answered "How to solve projectile motion problems?"', link: '/forum/1', read: false, createdAt: '2025-05-29T08:00:00Z' },
-  { id: '2', type: 'like', title: 'Your answer was liked', content: 'Hari Thapa liked your answer about integration techniques', link: '/forum/3', read: false, createdAt: '2025-05-29T06:00:00Z' },
-  { id: '3', type: 'announcement', title: 'New resources available', content: 'NEB 2081 past papers have been uploaded for all subjects', link: '/resources', read: true, createdAt: '2025-05-28T14:00:00Z' },
-  { id: '4', type: 'like', title: 'Your question received likes', content: 'Your question "Organic chemistry reaction mechanisms" received 5 likes', link: '/forum/2', read: true, createdAt: '2025-05-27T10:00:00Z' },
-];
+import { notificationService } from '@/lib/services';
+import type { Notification } from '@/types';
 
 const notificationIcons: Record<string, React.ReactNode> = {
   answer: <Bell className="h-5 w-5 text-primary" />,
@@ -30,10 +15,30 @@ const notificationIcons: Record<string, React.ReactNode> = {
 };
 
 export default function NotificationsPage() {
-  const [notifications, setNotifications] = useState(initialNotifications);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchNotifications = () => {
+    setIsLoading(true);
+    setError(null);
+    notificationService.getAll()
+      .then(setNotifications)
+      .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load notifications'))
+      .finally(() => setIsLoading(false));
+  };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial data fetch
+    fetchNotifications();
+  }, []);
 
   const markAllRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    setNotifications(prev => {
+      const updated = prev.map(n => ({ ...n, read: true }));
+      prev.filter(n => !n.read).forEach(n => notificationService.markAsRead(n.id));
+      return updated;
+    });
   };
 
   return (
@@ -50,26 +55,53 @@ export default function NotificationsPage() {
         )}
       </div>
 
-      <div className="space-y-2">
-        {notifications.map(notification => (
-          <Link key={notification.id} href={notification.link}>
-            <Card variant="outlined" padding="default" interactive className={`flex items-start gap-3 ${!notification.read ? 'bg-primary/5' : ''}`}>
-              <div className="flex items-center justify-center w-10 h-10 rounded-[var(--radius-full)] shrink-0 bg-surface-container-high">
-                {notificationIcons[notification.type]}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between gap-2">
-                  <h3 className={`text-sm ${!notification.read ? 'font-semibold text-on-surface' : 'font-medium text-on-surface'}`}>{notification.title}</h3>
-                  {!notification.read && <span className="w-2 h-2 rounded-full bg-primary shrink-0 mt-1.5" />}
+      {error ? (
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="flex items-center justify-center w-16 h-16 rounded-[var(--radius-full)] bg-error-container mb-4">
+            <AlertCircle className="h-8 w-8 text-on-error-container" />
+          </div>
+          <h3 className="text-base font-medium text-on-surface">Failed to load notifications</h3>
+          <p className="text-sm text-on-surface-variant mt-1 max-w-xs">{error}</p>
+          <Button variant="outline" size="md" iconLeft={<RefreshCw className="h-4 w-4" />} onClick={fetchNotifications} className="mt-4">
+            Retry
+          </Button>
+        </div>
+      ) : isLoading ? (
+        <div className="space-y-2">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="rounded-[var(--radius-md)] border border-outline-variant p-4 animate-pulse">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-[var(--radius-full)] bg-surface-container-highest shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 bg-surface-container-highest rounded w-2/3" />
+                  <div className="h-3 bg-surface-container-highest rounded w-full" />
                 </div>
-                <p className="text-xs text-on-surface-variant mt-0.5 line-clamp-2">{notification.content}</p>
               </div>
-            </Card>
-          </Link>
-        ))}
-      </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {notifications.map(notification => (
+            <Link key={notification.id} href={notification.link || '#'}>
+              <Card variant="outlined" padding="default" interactive className={`flex items-start gap-3 ${!notification.read ? 'bg-primary/5' : ''}`}>
+                <div className="flex items-center justify-center w-10 h-10 rounded-[var(--radius-full)] shrink-0 bg-surface-container-high">
+                  {notificationIcons[notification.type]}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-2">
+                    <h3 className={`text-sm ${!notification.read ? 'font-semibold text-on-surface' : 'font-medium text-on-surface'}`}>{notification.title}</h3>
+                    {!notification.read && <span className="w-2 h-2 rounded-full bg-primary shrink-0 mt-1.5" />}
+                  </div>
+                  <p className="text-xs text-on-surface-variant mt-0.5 line-clamp-2">{notification.content}</p>
+                </div>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      )}
 
-      {notifications.length === 0 && (
+      {!isLoading && !error && notifications.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="flex items-center justify-center w-16 h-16 rounded-[var(--radius-full)] bg-surface-container-high mb-4">
             <Bell className="h-8 w-8 text-on-surface-variant" />
