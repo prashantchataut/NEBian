@@ -51,7 +51,7 @@ export default function LoginPage() {
         </div>
 
         <div className="flex items-center justify-end">
-          <Link href="#" className="text-sm text-primary hover:text-primary-dark transition-colors font-medium">
+          <Link href="#" className="text-sm text-primary hover:text-on-primary-container transition-colors font-medium">
             Forgot password?
           </Link>
         </div>
@@ -82,7 +82,7 @@ export default function LoginPage() {
 
       <p className="text-center text-sm text-on-surface-variant">
         Don&apos;t have an account?{' '}
-        <Link href="/register" className="text-primary hover:text-primary-dark font-medium transition-colors">
+        <Link href="/register" className="text-primary hover:text-on-primary-container font-medium transition-colors">
           Create account
         </Link>
       </p>

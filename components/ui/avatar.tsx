@@ -39,7 +39,7 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
           <span
             className={cn(
               'absolute bottom-0 right-0 block rounded-[var(--radius-full)] ring-2 ring-surface',
-              online ? 'bg-emerald-500' : 'bg-on-surface-variant',
+              online ? 'bg-primary' : 'bg-on-surface-variant',
               size === 'sm' ? 'h-2 w-2' : size === 'md' ? 'h-2.5 w-2.5' : 'h-3 w-3'
             )}
           />

@@ -24,7 +24,6 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
       backgroundColor: variant === 'filled' ? color : variant === 'tonal' ? color : undefined,
       borderColor: variant === 'outlined' ? color : undefined,
       color: variant === 'filled' ? '#fff' : variant === 'tonal' ? '#fff' : color,
-      opacity: variant === 'tonal' ? '0.9' : undefined,
     } : undefined;
 
     return (

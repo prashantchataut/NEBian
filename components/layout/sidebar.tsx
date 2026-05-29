@@ -2,16 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, BookOpen, MessageCircle, Bell, Settings } from 'lucide-react';
 import { ThemeToggle } from './theme-toggle';
-
-const navItems = [
-  { href: '/', label: 'Home', icon: Home },
-  { href: '/resources', label: 'Resources', icon: BookOpen },
-  { href: '/forum', label: 'Forum', icon: MessageCircle },
-  { href: '/notifications', label: 'Alerts', icon: Bell },
-  { href: '/settings', label: 'Settings', icon: Settings },
-];
+import { navItems } from '@/lib/nav';
 
 export function Sidebar() {
   const pathname = usePathname();

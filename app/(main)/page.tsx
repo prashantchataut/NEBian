@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import { BookOpen, MessageCircle, Heart, ArrowRight, TrendingUp, Clock, Sparkles } from 'lucide-react';
+import { BookOpen, MessageCircle, Heart, ArrowRight, TrendingUp, Clock } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { SUBJECTS, SUBJECT_COLORS, SUBJECT_LABELS, GRADE_LABELS, RESOURCE_TYPE_LABELS } from '@/types';
+import { SUBJECTS, SUBJECT_COLORS, SUBJECT_LABELS } from '@/types';
 
 const subjectIcons: Record<string, string> = {
   Physics: 'P',
@@ -26,8 +26,8 @@ export default function HomePage() {
       <section>
         <h2 className="text-xs font-semibold text-on-surface-variant uppercase tracking-widest mb-3">Subjects</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {SUBJECTS.map((subject, i) => (
-            <Link key={subject} href={`/resources?subject=${subject}`} className="animate-slide-up stagger-%7Bi%7D">
+          {SUBJECTS.map((subject) => (
+            <Link key={subject} href={`/resources?subject=${subject}`} className="animate-slide-up">
               <Card variant="outlined" padding="compact" interactive className="flex items-center gap-3">
                 <div
                   className="flex items-center justify-center w-10 h-10 rounded-[var(--radius-md)] text-sm font-bold text-white shrink-0"
@@ -48,7 +48,7 @@ export default function HomePage() {
       <section>
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-xs font-semibold text-on-surface-variant uppercase tracking-widest">Recent Resources</h2>
-          <Link href="/resources" className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-primary-dark transition-colors group">
+          <Link href="/resources" className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-on-primary-container transition-colors group">
             View all <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </div>
@@ -79,7 +79,7 @@ export default function HomePage() {
       <section>
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-xs font-semibold text-on-surface-variant uppercase tracking-widest">Forum Activity</h2>
-          <Link href="/forum" className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-primary-dark transition-colors group">
+          <Link href="/forum" className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-on-primary-container transition-colors group">
             View all <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </div>

@@ -25,7 +25,7 @@ export function MobileNav() {
               key={item.href}
               href={item.href}
               className={`flex flex-col items-center justify-center gap-0.5 min-w-[56px] py-1 transition-[color] duration-[var(--transition-fast)] ${
-                isActive ? 'text-primary' : 'text-on-surface-variant active:text-on-surface'
+                isActive ? 'text-primary' : 'text-on-surface-variant'
               }`}
               aria-current={isActive ? 'page' : undefined}
             >

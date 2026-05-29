@@ -29,7 +29,7 @@ interface PdfViewerProps {
   pageCount?: number;
 }
 
-export function PdfViewer({ fileUrl, resourceTitle, subject, grade, type, pageCount: initialPageCount }: PdfViewerProps) {
+export function PdfViewer({ fileUrl, resourceTitle, subject, grade, pageCount: initialPageCount }: PdfViewerProps) {
   const [numPages, setNumPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [zoom, setZoom] = useState(100);

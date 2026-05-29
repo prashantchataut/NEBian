@@ -12,6 +12,7 @@ export function TopBar() {
           <input
             type="search"
             placeholder="Search resources, questions..."
+            aria-label="Search resources and questions"
             className="w-full h-10 pl-10 pr-4 rounded-[var(--radius-full)] bg-surface-container-high text-on-surface text-sm placeholder:text-on-surface-variant/60 border border-transparent hover:border-outline-variant focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-[border-color,box-shadow] duration-[var(--transition-fast)]"
           />
         </div>
