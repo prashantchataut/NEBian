@@ -73,6 +73,7 @@ export default function ResourcesPage() {
                 <button
                   key={s}
                   onClick={() => toggleFilter(selectedSubjects, setSelectedSubjects, s)}
+                  aria-pressed={selectedSubjects.includes(s)}
                   className={`px-3 h-7 rounded-[var(--radius-full)] text-xs font-medium transition-[background-color,color] duration-[var(--transition-fast)] ${
                     selectedSubjects.includes(s)
                       ? 'bg-primary text-on-primary'
@@ -91,6 +92,7 @@ export default function ResourcesPage() {
                 <button
                   key={g}
                   onClick={() => toggleFilter(selectedGrades, setSelectedGrades, g)}
+                  aria-pressed={selectedGrades.includes(g)}
                   className={`px-3 h-7 rounded-[var(--radius-full)] text-xs font-medium transition-[background-color,color] duration-[var(--transition-fast)] ${
                     selectedGrades.includes(g)
                       ? 'bg-primary text-on-primary'
@@ -109,6 +111,7 @@ export default function ResourcesPage() {
                 <button
                   key={t}
                   onClick={() => toggleFilter(selectedTypes, setSelectedTypes, t)}
+                  aria-pressed={selectedTypes.includes(t)}
                   className={`px-3 h-7 rounded-[var(--radius-full)] text-xs font-medium transition-[background-color,color] duration-[var(--transition-fast)] ${
                     selectedTypes.includes(t)
                       ? 'bg-primary text-on-primary'
@@ -140,11 +143,11 @@ export default function ResourcesPage() {
                 </div>
               </div>
               <div className="flex flex-wrap items-center gap-2 mt-auto">
-                <Badge size="sm" variant="tonal" style={{ backgroundColor: SUBJECT_COLORS[resource.subject], color: '#fff' }}>
+                <Badge size="sm" variant="tonal" color={SUBJECT_COLORS[resource.subject]}>
                   {SUBJECT_LABELS[resource.subject]}
                 </Badge>
                 <Badge size="sm" variant="outlined">{GRADE_LABELS[resource.grade]}</Badge>
-                <Badge size="sm" variant="tonal" style={{ backgroundColor: RESOURCE_TYPE_COLORS[resource.type], color: '#fff' }}>
+                <Badge size="sm" variant="tonal" color={RESOURCE_TYPE_COLORS[resource.type]}>
                   {RESOURCE_TYPE_LABELS[resource.type]}
                 </Badge>
               </div>

@@ -132,7 +132,7 @@ export function PdfViewer({ fileUrl, resourceTitle, subject, grade, pageCount: i
           <div className="min-w-0">
             <h1 className="text-sm font-medium text-on-surface truncate">{resourceTitle}</h1>
             <div className="flex items-center gap-2 mt-0.5">
-              <Badge size="sm" variant="tonal" style={{ backgroundColor: SUBJECT_COLORS[subject as keyof typeof SUBJECT_COLORS], color: '#fff' }}>
+              <Badge size="sm" variant="tonal" color={SUBJECT_COLORS[subject as keyof typeof SUBJECT_COLORS]}>
                 {SUBJECT_LABELS[subject as keyof typeof SUBJECT_LABELS] || subject}
               </Badge>
               <Badge size="sm" variant="outlined">{GRADE_LABELS[grade as keyof typeof GRADE_LABELS] || grade}</Badge>

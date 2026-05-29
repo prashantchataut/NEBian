@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { BookOpen, MessageCircle, Heart, ArrowRight, TrendingUp, Clock } from 'lucide-react';
+import { BookOpen, ThumbsUp, ArrowRight, Clock } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { SUBJECTS, SUBJECT_COLORS, SUBJECT_LABELS } from '@/types';
@@ -18,9 +18,9 @@ const subjectIcons: Record<string, string> = {
 export default function HomePage() {
   return (
     <div className="px-4 lg:px-6 py-6 max-w-5xl mx-auto space-y-8 animate-fade-in">
-      <section className="space-y-1">
+      <section>
         <h1 className="text-2xl font-semibold text-on-surface tracking-tight">Welcome back</h1>
-        <p className="text-sm text-on-surface-variant">Continue where you left off or explore new resources.</p>
+        <p className="text-sm text-on-surface-variant mt-1">Continue where you left off or explore new resources.</p>
       </section>
 
       <section>
@@ -63,7 +63,7 @@ export default function HomePage() {
                   <h3 className="text-sm font-medium text-on-surface truncate">Physics Grade 11 Textbook</h3>
                   <p className="text-xs text-on-surface-variant mt-0.5">Neb Edition 2081</p>
                   <div className="flex items-center gap-2 mt-2">
-                    <Badge size="sm" variant="tonal" style={{ backgroundColor: 'var(--color-subject-physics)', color: '#fff' }}>Physics</Badge>
+                    <Badge size="sm" variant="tonal" color="var(--color-subject-physics)">Physics</Badge>
                     <Badge size="sm" variant="outlined">Grade 11</Badge>
                   </div>
                 </div>
@@ -94,32 +94,12 @@ export default function HomePage() {
                   <h3 className="text-sm font-medium text-on-surface">How to solve projectile motion problems?</h3>
                   <div className="flex items-center gap-3 mt-1.5">
                     <span className="flex items-center gap-1 text-xs text-on-surface-variant">
-                      <MessageCircle className="h-3 w-3" /> 5 answers
+                      <ThumbsUp className="h-3 w-3" /> 12
                     </span>
-                    <span className="flex items-center gap-1 text-xs text-on-surface-variant">
-                      <Heart className="h-3 w-3" /> 12
-                    </span>
+                    <span className="text-xs text-on-surface-variant">5 answers</span>
                   </div>
                 </div>
               </div>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      <section>
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-xs font-semibold text-on-surface-variant uppercase tracking-widest">Popular This Week</h2>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {[1, 2, 3].map((i) => (
-            <Card key={i} variant="outlined" padding="default" interactive>
-              <div className="flex items-center gap-2 mb-2">
-                <TrendingUp className="h-4 w-4 text-primary" />
-                <Badge size="sm" variant="tonal" style={{ backgroundColor: 'var(--color-type-pastpaper)', color: '#fff' }}>Past Paper</Badge>
-              </div>
-              <h3 className="text-sm font-medium text-on-surface">NEB Physics 2080 Past Paper</h3>
-              <p className="text-xs text-on-surface-variant mt-1">Grade 12</p>
             </Card>
           ))}
         </div>

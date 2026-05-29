@@ -21,9 +21,9 @@ const sizeStyles: Record<BadgeSize, string> = {
 export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
   ({ className, variant = 'tonal', size = 'md', color, removable, onRemove, children, style, ...props }, ref) => {
     const colorStyle = color ? {
-      backgroundColor: variant === 'filled' ? color : variant === 'tonal' ? color : undefined,
+      backgroundColor: variant === 'tonal' ? color : variant === 'filled' ? color : undefined,
       borderColor: variant === 'outlined' ? color : undefined,
-      color: variant === 'filled' ? '#fff' : variant === 'tonal' ? '#fff' : color,
+      color: variant === 'outlined' ? color : '#fff',
     } : undefined;
 
     return (
@@ -43,6 +43,7 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
         {children}
         {removable && (
           <button
+            type="button"
             onClick={onRemove}
             className="ml-0.5 -mr-1 inline-flex items-center justify-center rounded-full hover:bg-black/10 active:bg-black/20 transition-colors"
             aria-label="Remove"

@@ -2,20 +2,21 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Heart, MessageCircle, Share2, CheckCircle2, ArrowLeft } from 'lucide-react';
+import { ThumbsUp, MessageCircle, Share2, CheckCircle2, ArrowLeft } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { SUBJECT_COLORS, SUBJECT_LABELS, GRADE_LABELS } from '@/types';
 
 const mockQuestion = {
   id: '1',
-  author: { id: '1', name: 'Ram Sharma', initials: 'RS', grade: 'Grade 11' },
+  author: { id: '1', name: 'Ram Sharma', initials: 'RS', grade: 'Grade11' as const },
   title: 'How to solve projectile motion problems in Physics?',
   content: 'I am struggling with projectile motion problems, especially the ones involving range and maximum height. Can someone explain the approach step by step?\n\nFor example, how do I solve: A ball is thrown at an angle of 45 degrees with initial velocity of 20 m/s. Find the maximum height and range.\n\nI know the basic formulas but I keep making mistakes in applying them. Any tips would be appreciated!',
-  subject: 'Physics',
-  grade: 'Grade11',
+  subject: 'Physics' as const,
+  grade: 'Grade11' as const,
   tags: ['mechanics', 'projectile'],
   likesCount: 12,
   answersCount: 5,
@@ -24,8 +25,8 @@ const mockQuestion = {
 };
 
 const mockAnswers = [
-  { id: 'a1', author: { id: '2', name: 'Sita Poudel', initials: 'SP', grade: 'Grade 12' }, content: 'Great question! Here is the step-by-step approach:\n\n**Step 1:** Break the initial velocity into components.\n- Horizontal: vx = v cos(45) = 20 x 0.707 = 14.14 m/s\n- Vertical: vy = v sin(45) = 20 x 0.707 = 14.14 m/s\n\n**Step 2:** For maximum height, use: H = vy^2 / (2g)\n- H = (14.14)^2 / (2 x 9.8) = 10.2 m\n\n**Step 3:** For range, use: R = v^2 sin(2theta) / g\n- R = (20)^2 x sin(90) / 9.8 = 40.8 m\n\nHope this helps!', likesCount: 8, isAccepted: true, isLikedByMe: false, createdAt: '2025-05-28T11:00:00Z' },
-  { id: 'a2', author: { id: '3', name: 'Hari Thapa', initials: 'HT', grade: 'Grade 11' }, content: 'One tip I found helpful: always draw a diagram first! Label the angle, initial velocity, and mark the horizontal and vertical components. This prevents mistakes in selecting the right formula.', likesCount: 3, isAccepted: false, isLikedByMe: false, createdAt: '2025-05-28T12:30:00Z' },
+  { id: 'a1', author: { id: '2', name: 'Sita Poudel', initials: 'SP', grade: 'Grade12' as const }, content: 'Great question! Here is the step-by-step approach:\n\nStep 1: Break the initial velocity into components.\n- Horizontal: vx = v cos(45) = 14.14 m/s\n- Vertical: vy = v sin(45) = 14.14 m/s\n\nStep 2: For maximum height, use: H = vy^2 / (2g)\n- H = (14.14)^2 / (2 x 9.8) = 10.2 m\n\nStep 3: For range, use: R = v^2 sin(2theta) / g\n- R = (20)^2 x sin(90) / 9.8 = 40.8 m', likesCount: 8, isAccepted: true, isLikedByMe: false, createdAt: '2025-05-28T11:00:00Z' },
+  { id: 'a2', author: { id: '3', name: 'Hari Thapa', initials: 'HT', grade: 'Grade11' as const }, content: 'One tip I found helpful: always draw a diagram first! Label the angle, initial velocity, and mark the horizontal and vertical components. This prevents mistakes in selecting the right formula.', likesCount: 3, isAccepted: false, isLikedByMe: false, createdAt: '2025-05-28T12:30:00Z' },
 ];
 
 export default function QuestionDetailPage() {
@@ -42,10 +43,10 @@ export default function QuestionDetailPage() {
         <div className="flex items-start gap-3 mb-4">
           <Avatar size="lg" initials={mockQuestion.author.initials} />
           <div className="flex-1 min-w-0">
-            <h1 className="text-lg font-semibold text-on-s-surface tracking-tight">{mockQuestion.title}</h1>
+            <h1 className="text-lg font-semibold text-on-surface tracking-tight">{mockQuestion.title}</h1>
             <div className="flex items-center gap-2 mt-1">
               <span className="text-sm text-on-surface">{mockQuestion.author.name}</span>
-              <span className="text-xs text-on-surface-variant">{mockQuestion.author.grade}</span>
+              <span className="text-xs text-on-surface-variant">{GRADE_LABELS[mockQuestion.author.grade]}</span>
             </div>
           </div>
         </div>
@@ -57,8 +58,10 @@ export default function QuestionDetailPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2 mb-4">
-          <Badge size="sm" variant="tonal" style={{ backgroundColor: 'var(--color-subject-physics)', color: '#fff' }}>{mockQuestion.subject}</Badge>
-          <Badge size="sm" variant="outlined">Grade 11</Badge>
+          <Badge size="sm" variant="tonal" color={SUBJECT_COLORS[mockQuestion.subject]}>
+            {SUBJECT_LABELS[mockQuestion.subject]}
+          </Badge>
+          <Badge size="sm" variant="outlined">{GRADE_LABELS[mockQuestion.grade]}</Badge>
           {mockQuestion.tags.map(tag => (
             <Badge key={tag} size="sm" variant="outlined">{tag}</Badge>
           ))}
@@ -71,7 +74,7 @@ export default function QuestionDetailPage() {
             onClick={() => { setIsLiked(!isLiked); setLikeCount(isLiked ? likeCount - 1 : likeCount + 1); }}
             className="flex items-center gap-1.5 text-sm text-on-surface-variant hover:text-primary transition-colors active:scale-95"
           >
-            <Heart className={`h-4 w-4 transition-transform ${isLiked ? 'fill-error text-error' : ''}`} />
+            <ThumbsUp className={`h-4 w-4 transition-transform ${isLiked ? 'fill-primary text-primary' : ''}`} />
             {likeCount}
           </button>
           <span className="flex items-center gap-1.5 text-sm text-on-surface-variant">
@@ -103,7 +106,7 @@ export default function QuestionDetailPage() {
               <Avatar size="md" initials={answer.author.initials} />
               <div>
                 <span className="text-sm font-medium text-on-surface">{answer.author.name}</span>
-                <span className="text-xs text-on-surface-variant ml-2">{answer.author.grade}</span>
+                <span className="text-xs text-on-surface-variant ml-2">{GRADE_LABELS[answer.author.grade]}</span>
               </div>
             </div>
             <div className="text-sm text-on-surface-variant leading-relaxed">
@@ -113,7 +116,7 @@ export default function QuestionDetailPage() {
             </div>
             <Separator className="my-3" />
             <button className="flex items-center gap-1.5 text-sm text-on-surface-variant hover:text-primary transition-colors active:scale-95">
-              <Heart className={`h-4 w-4 ${answer.isLikedByMe ? 'fill-error text-error' : ''}`} />
+              <ThumbsUp className={`h-4 w-4 ${answer.isLikedByMe ? 'fill-primary text-primary' : ''}`} />
               {answer.likesCount}
             </button>
           </Card>

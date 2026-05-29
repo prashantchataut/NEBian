@@ -1,6 +1,7 @@
 'use client';
 
-import { Search, Bell } from 'lucide-react';
+import Link from 'next/link';
+import { Search, Bell, User } from 'lucide-react';
 import { ThemeToggle } from './theme-toggle';
 
 export function TopBar() {
@@ -19,13 +20,21 @@ export function TopBar() {
       </div>
 
       <div className="flex items-center gap-1">
-        <button
+        <Link
+          href="/notifications"
           className="relative inline-flex items-center justify-center h-10 w-10 rounded-[var(--radius-full)] text-on-surface-variant hover:bg-surface-container-high active:bg-surface-container-highest transition-[background-color] duration-[var(--transition-fast)]"
           aria-label="Notifications"
         >
           <Bell className="h-5 w-5" />
           <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error ring-2 ring-surface" />
-        </button>
+        </Link>
+        <Link
+          href="/settings"
+          className="inline-flex items-center justify-center h-10 w-10 rounded-[var(--radius-full)] text-on-surface-variant hover:bg-surface-container-high active:bg-surface-container-highest transition-[background-color] duration-[var(--transition-fast)]"
+          aria-label="Settings"
+        >
+          <User className="h-5 w-5" />
+        </Link>
         <ThemeToggle />
       </div>
     </header>

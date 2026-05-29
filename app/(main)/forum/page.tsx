@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Search, Heart, MessageCircle, Filter } from 'lucide-react';
+import { Search, ThumbsUp, MessageCircle, Filter } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -80,7 +80,7 @@ export default function ForumPage() {
             <p className="text-xs font-semibold text-on-surface-variant uppercase tracking-widest mb-2">Subject</p>
             <div className="flex flex-wrap gap-2">
               {SUBJECTS.map(s => (
-                <button key={s} onClick={() => toggleFilter(selectedSubjects, setSelectedSubjects, s)} className={`px-3 h-7 rounded-[var(--radius-full)] text-xs font-medium transition-[background-color,color] duration-[var(--transition-fast)] ${selectedSubjects.includes(s) ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest active:bg-surface-container-highest'}`}>
+                <button key={s} onClick={() => toggleFilter(selectedSubjects, setSelectedSubjects, s)} aria-pressed={selectedSubjects.includes(s)} className={`px-3 h-7 rounded-[var(--radius-full)] text-xs font-medium transition-[background-color,color] duration-[var(--transition-fast)] ${selectedSubjects.includes(s) ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest active:bg-surface-container-highest'}`}>
                   {SUBJECT_LABELS[s]}
                 </button>
               ))}
@@ -90,7 +90,7 @@ export default function ForumPage() {
             <p className="text-xs font-semibold text-on-surface-variant uppercase tracking-widest mb-2">Grade</p>
             <div className="flex flex-wrap gap-2">
               {GRADES.map(g => (
-                <button key={g} onClick={() => toggleFilter(selectedGrades, setSelectedGrades, g)} className={`px-3 h-7 rounded-[var(--radius-full)] text-xs font-medium transition-[background-color,color] duration-[var(--transition-fast)] ${selectedGrades.includes(g) ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest active:bg-surface-container-highest'}`}>
+                <button key={g} onClick={() => toggleFilter(selectedGrades, setSelectedGrades, g)} aria-pressed={selectedGrades.includes(g)} className={`px-3 h-7 rounded-[var(--radius-full)] text-xs font-medium transition-[background-color,color] duration-[var(--transition-fast)] ${selectedGrades.includes(g) ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest active:bg-surface-container-highest'}`}>
                   {GRADE_LABELS[g]}
                 </button>
               ))}
@@ -100,7 +100,7 @@ export default function ForumPage() {
             <p className="text-xs font-semibold text-on-surface-variant uppercase tracking-widest mb-2">Sort by</p>
             <div className="flex flex-wrap gap-2">
               {(['newest', 'most-liked', 'unanswered'] as SortOption[]).map(s => (
-                <button key={s} onClick={() => setSortBy(s)} className={`px-3 h-7 rounded-[var(--radius-full)] text-xs font-medium transition-[background-color,color] duration-[var(--transition-fast)] ${sortBy === s ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest active:bg-surface-container-highest'}`}>
+                <button key={s} onClick={() => setSortBy(s)} aria-pressed={sortBy === s} className={`px-3 h-7 rounded-[var(--radius-full)] text-xs font-medium transition-[background-color,color] duration-[var(--transition-fast)] ${sortBy === s ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest active:bg-surface-container-highest'}`}>
                   {s === 'most-liked' ? 'Most Liked' : s === 'unanswered' ? 'Unanswered' : 'Newest'}
                 </button>
               ))}
@@ -120,13 +120,13 @@ export default function ForumPage() {
                   <p className="text-xs text-on-surface-variant mt-1 line-clamp-1">{question.content}</p>
                   <div className="flex items-center gap-3 mt-2.5">
                     {question.subject && (
-                      <Badge size="sm" variant="tonal" style={{ backgroundColor: SUBJECT_COLORS[question.subject] || 'var(--color-outline)', color: '#fff' }}>
+                      <Badge size="sm" variant="tonal" color={SUBJECT_COLORS[question.subject] || 'var(--color-outline)'}>
                         {SUBJECT_LABELS[question.subject as keyof typeof SUBJECT_LABELS]}
                       </Badge>
                     )}
                     {question.grade && <Badge size="sm" variant="outlined">{GRADE_LABELS[question.grade]}</Badge>}
                     <span className="flex items-center gap-1 text-xs text-on-surface-variant">
-                      <Heart className={`h-3 w-3 ${question.isLikedByMe ? 'fill-error text-error' : ''}`} />
+                      <ThumbsUp className={`h-3 w-3 ${question.isLikedByMe ? 'fill-primary text-primary' : ''}`} />
                       {question.likesCount}
                     </span>
                     <span className="flex items-center gap-1 text-xs text-on-surface-variant">

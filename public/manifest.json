@@ -4,20 +4,35 @@
   "description": "Modern learning platform for Nepali NEB students",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#FFFBFE",
+  "background_color": "#141218",
   "theme_color": "#6750A4",
   "orientation": "portrait-primary",
+  "scope": "/",
   "categories": ["education", "productivity"],
   "icons": [
     {
+      "src": "/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
       "src": "/icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/icons/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
